@@ -67,24 +67,22 @@
         a { color: #EDE9E5; text-decoration: none; font-weight: bold; }
         .hunt-header { font-family: 'Classico'; color: #E69D6C; text-align: center; width: 100%; margin: 20px 0; }
 
-        /* AR MODEL SLIDER STYLES - MATCHED TO VIDEO WIDTH & SCALED DOWN 25% */
+        /* AR MODEL SLIDER STYLES - EVENLY FITS AND CENTERS 3 CARDS UNDER VIDEO */
         .ar-slider-container {
             display: flex;
+            justify-content: center;
             gap: 15px;
-            overflow-x: auto;
             width: 100%;
             padding: 15px 0 20px 0;
             box-sizing: border-box;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
         }
         .ar-slider-card {
-            flex: 0 0 165px; /* Reduced from 220px by 25% */
-            scroll-snap-align: center;
+            flex: 0 0 calc((100% - 30px) / 3);
+            max-width: 183px;
             background-color: #43141c;
             border: 2px solid #E69D6C;
             border-radius: 12px;
-            padding: 10px;
+            padding: 10px 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -92,23 +90,24 @@
         }
         .ar-slider-card model-viewer {
             width: 100%;
-            height: 135px; /* Reduced from 180px by 25% */
+            height: 135px;
             background-color: transparent;
             border-radius: 8px;
         }
         .ar-card-title {
             font-family: 'ChronicleDeck-Semibold';
             color: #EDE9E5;
-            font-size: 16px;
+            font-size: 15px;
             margin: 8px 0 6px 0;
             text-align: center;
+            white-space: nowrap;
         }
         .ar-launch-btn {
             background-color: #E69D6C;
             color: #571B25;
             border: none;
             border-radius: 6px;
-            padding: 6px 10px;
+            padding: 6px 4px;
             font-family: 'ChronicleDeck-Semibold';
             font-weight: bold;
             font-size: 13px;
@@ -117,7 +116,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -138,7 +137,7 @@
         <button id="play-pause-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; padding: 10px 15px; background: #E69D6C; color: white; border:none; font-size: 30px; cursor:pointer;">  ▶  </button>
     </div>
 
-    <!-- 3D Model AR Slider (Matching Video Container Width) -->
+    <!-- 3D Model Cards Container -->
     <div class="ar-slider-container">
         <!-- 1. Studio Model Card -->
         <div class="ar-slider-card">
