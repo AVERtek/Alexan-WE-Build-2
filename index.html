@@ -67,7 +67,7 @@
         a { color: #EDE9E5; text-decoration: none; font-weight: bold; }
         .hunt-header { font-family: 'Classico'; color: #E69D6C; text-align: center; width: 100%; margin: 20px 0; }
 
-        /* AR MODEL SLIDER STYLES - MATCHED TO VIDEO WIDTH */
+        /* AR MODEL SLIDER STYLES - MATCHED TO VIDEO WIDTH & SCALED DOWN 25% */
         .ar-slider-container {
             display: flex;
             gap: 15px;
@@ -79,12 +79,12 @@
             -webkit-overflow-scrolling: touch;
         }
         .ar-slider-card {
-            flex: 0 0 220px;
+            flex: 0 0 165px; /* Reduced from 220px by 25% */
             scroll-snap-align: center;
             background-color: #43141c;
             border: 2px solid #E69D6C;
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -92,15 +92,15 @@
         }
         .ar-slider-card model-viewer {
             width: 100%;
-            height: 180px;
+            height: 135px; /* Reduced from 180px by 25% */
             background-color: transparent;
             border-radius: 8px;
         }
         .ar-card-title {
             font-family: 'ChronicleDeck-Semibold';
             color: #EDE9E5;
-            font-size: 18px;
-            margin: 10px 0 8px 0;
+            font-size: 16px;
+            margin: 8px 0 6px 0;
             text-align: center;
         }
         .ar-launch-btn {
@@ -108,10 +108,10 @@
             color: #571B25;
             border: none;
             border-radius: 6px;
-            padding: 8px 14px;
+            padding: 6px 10px;
             font-family: 'ChronicleDeck-Semibold';
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             width: 100%;
             display: flex;
@@ -149,7 +149,7 @@
                 ar-modes="scene-viewer webxr quick-look" 
                 ios-src="Models/GIRL_converted.usdz"
                 ar-placement="floor"
-                camera-orbit="45deg 75deg 105%"
+                camera-orbit="0deg 0deg 105%"
                 rotation="0 1.75 0" 
                 auto-rotate
                 camera-controls
@@ -170,7 +170,7 @@
                 ar-modes="scene-viewer webxr quick-look" 
                 ios-src="Models/THE_CHARLES_FLOORPLAN_FINAL_v12.usdz"
                 ar-placement="floor"
-                camera-orbit="45deg 75deg 105%"
+                camera-orbit="0deg 0deg 105%"
                 rotation="0 1.75 0" 
                 auto-rotate
                 camera-controls
