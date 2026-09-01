@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alexan West End</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=0-0000000000"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', '0-0000000000');
+    </script>
+<!--=========================================================-->
+    <!--REDIRECT TOGGLE: REMOVE "/*" ABOVE AND "*/" BELOW TO ACTIVATE -->
+    <!--<script>
+        window.location.replace("https://alexanwestend.com/");
+    </script>
+    <style>
+        /* Hide all original site content */
+        .container, script, model-viewer { display: none !important; }
+        
+        /* Show only the fallback message */
+        .redirect-msg { 
+            display: flex !important; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            text-align: center;
+        }
+    </style>
+-->  
+<!--=========================================================-->
+    <style>
+        /* Global & Button Styles */
+        html, body { margin: 0; padding: 0; overflow-x: hidden; font-family: Google Sans, Noto, Roboto, Helvetica Neue, sans-serif; color: #ede9e5; background-color: #571b25; }
+        .container { max-width: 600px; width: 100%; box-sizing: border-box; padding: 0 10px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+        .card { background-color: rgb(87, 27, 37); border: 2px solid rgb(87, 27, 37); padding: 10px; margin-bottom: 1em; display: flex; flex-direction: column; align-items: center; text-align: center; border-radius: 6px; overflow: hidden; width: 100%; box-sizing: border-box; }
+ 
+        model-viewer { --progress-bar-color: #E69D6C; }
+        
+        .card h2 { margin: 0.25em 0; padding: 0; line-height: 1.2; }
+        .card h2 p { margin: 0; padding: 0; }
+ 
+        /* UNIFORM MAIN BUTTONS */
+        .main-button {
+            background-color: #e7ccb4; 
+            border-radius: 8px; 
+            border: 2px solid #E69D6C; 
+            height: 42px; 
+            width: 200px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            box-sizing: border-box;
+            padding: 0 10px;
+        }
+ 
+        .main-button img { height: 28px; margin-right: 8px; flex-shrink: 0; }
+ 
+        @font-face { font-family: 'Classico'; src: url('fonts/Classico.otf') format('opentype'); }
+        @font-face { font-family: 'ChronicleDeck-Semibold'; src: url('fonts/ChronicleDeck-Semibold.otf') format('opentype'); }
+ 
+        a { color: #EDE9E5; text-decoration: none; font-weight: bold; }
+        .hunt-header { font-family: 'Classico'; color: #E69D6C; text-align: center; width: 100%; margin: 20px 0; }
+        
+        /* Hide all model-viewers on page layout */
+        model-viewer#reveal, 
+        model-viewer#reveal-1bed, 
+        model-viewer#reveal-finley { display: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <img src="images/AlexanWestEnd_Logo_White.png" style="width: 400px; max-width: 100%; height: auto;">
+    </div>
+ 
+    <!-- 1. Hidden Studio AR Model -->
+    <model-viewer
+        id="reveal" 
+        src="Models/Studio_test-optimized.glb?sound=Sound/AR Audio Mix_S1_final.mp3" 
+        ar
+        ar-modes="scene-viewer webxr quick-look" 
+        ios-src="Models/GIRL_converted.usdz"
+        ar-placement="floor"
+        camera-orbit="45deg 75deg 105%"
+        rotation="0 1.75 0" 
+        interaction-prompt="none">
+    </model-viewer>
+
+    <!-- 2. Hidden 1-Bedroom AR Model -->
+    <model-viewer
+        id="reveal-1bed" 
+        src="Models/1Bedroom_test-optimized.glb" 
+        ar
+        ar-modes="scene-viewer webxr quick-look" 
+        ios-src="Models/1Bedroom_converted.usdz"
+        ar-placement="floor"
+        camera-orbit="45deg 75deg 105%"
+        rotation="0 1.75 0" 
+        interaction-prompt="none">
+    </model-viewer>
+
+    <!-- 3. Hidden Meet Finley AR Model -->
+    <model-viewer
+        id="reveal-finley" 
+        src="Models/Finley_test-optimized.glb" 
+        ar
+        ar-modes="scene-viewer webxr quick-look" 
+        ios-src="Models/Finley_converted.usdz"
+        ar-placement="floor"
+        camera-orbit="45deg 75deg 105%"
+        rotation="0 1.75 0" 
+        interaction-prompt="none">
+    </model-viewer>
+
+    <p style="text-align:center; font-family: 'Classico'; font-weight: bold; color: #E69D6C; font-size: 26px;">Brand New Studio, 1, 2,& 3 Bedroom Residences in Downtown Long Beach.</p>
+    <h1 class="hunt-header">LEASE NOW</h1>
+    <p style="text-align:center; font-family: 'Classico'; font-weight: bold; color: #EDE9E5; font-size: 16px;">Make sure Wi-Fi and sound is on!</p>
+ 
+    <div style="position: relative; width: 100%;">
+        <video id="video-overlay" style="width: 100%;" poster="images/Shirley_demo.png" playsinline muted>
+            <source src="Video/AI S1_shirley.mp4" type="video/mp4">
+        </video>
+        <button id="play-pause-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; padding: 10px 15px; background: #E69D6C; color: white; border:none; font-size: 30px; cursor:pointer;">  ▶  </button>
+    </div>
+    <!--<p style="text-align:center; font-family: 'Classico'; font-weight: bold; color: #EDE9E5; font-size: 24px;">Experience Alexan West End through augmented reality model tours or meet our property mascot Finnley in your own space.</p> -->
+    
+    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <!-- Studio Model Button -->
+        <button id="ar-button-studio" class="main-button">
+            <span style="font-size: 20px; color: #571B25; font-family: 'ChronicleDeck-Semibold';"><strong>AR Studio Tour</strong></span>
+        </button>
+
+        <!-- 1-Bedroom Model Button -->
+        <button id="ar-button-1bed" class="main-button">
+            <span style="font-size: 20px; color: #571B25; font-family: 'ChronicleDeck-Semibold';"><strong>AR 1 Bedroom Tour</strong></span>
+        </button>
+
+        <!-- Meet Finley Button -->
+        <button id="ar-button-finley" class="main-button">
+            <span style="font-size: 20px; color: #571B25; font-family: 'ChronicleDeck-Semibold';"><strong>AR Meet Finnley</strong></span>
+        </button>
+ 
+        
+    </div>
+ 
+    <div class="card" style="margin-top: 20px;">
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Select Your:</b><a href="https://alexanwestend.com/floor-plans/" target="_blank"> Floor Plan</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Explore:</b><a href="https://alexanwestend.com/floor-plans/map/" target="_blank"> Interactive Map</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Discover:</b><a href="https://alexanwestend.com/amenities/" target="_blank"> Resort Amenities</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Email:</b><a href="mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End" onclick="getOutboundLink('mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End;'); return false;"> Us</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Call:</b><a href="tel:+15625219938" target="_blank"> 562-521-9938</a></p></h2>
+        
+        <h2 style="text-align: center;" markdown="1"><b style="color:#E69D6C;"><p style="font-family:Classico"> 600 West Broadway. Long Beach, CA. 90802</p></h2></b>
+        <br>
+        <!-- Coupon Button -->
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <button id="viewPrintCertificateButton" class="main-button">
+            <span style="font-size: 20px; color: #571B25; font-family: 'ChronicleDeck-Semibold';"><strong>Claim Your VIP Gift</strong></span>
+        </button>
+        <div style="margin-top: 1px;"></div>
+        
+        <!--<h1><p style="font-family: 'Classico'; color: #EDE9E5; font-size: 40px;"><em> Find Out More About</em></p></h1>
+        <img src="images/WestEnd_WE_060526 (1).png" style="width: 300px; max-width: 90%;">
+    </div>
+    
+    <button onclick="window.open('https://alexanwestend.com/', '_blank')" style="background-color: #E69D6C; border-radius: 8px; border: 2px solid #E69D6C; height: 40px; color: #571B25; font-size: 30px; font-family: 'ChronicleDeck-Semibold'; margin: 15px 0; cursor: pointer;"><strong> HERE</strong></button> -->
+ 
+    <div class="card">
+        <img src="images/AR Instructions v4HDwht.png" style="width: 100%; max-width: 350px;">
+        <h3 style="font-family:'Classico'; color: #E69D6C; font-size: 14px;"><em>If AR button does not appear on mobile, use another browser.</em></h3>
+        <img src="images/Bugs Peach.png" style="width: 100%; max-width: 200px;">
+    </div>
+    
+    <div class="card" style="margin-top: 20px;">
+        <a href="https://avertek.net/" target="_blank"><p style="font-family:'Classico'; color:#E7CCB4; font-size: 14px;">Contact AVERtek to learn more about AR marketing.</p></a>
+    </div>
+</div>
+ 
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.js"></script>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+ 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const video = document.getElementById('video-overlay');
+        const playBtn = document.getElementById('play-pause-button');
+ 
+        function toggleVideo() {
+            if (video.paused) { video.play(); video.muted = false; playBtn.style.display = "none"; }
+            else { video.pause(); playBtn.style.display = "block"; }
+        }
+ 
+        playBtn.addEventListener('click', toggleVideo);
+        video.addEventListener('click', toggleVideo);
+ 
+        function openPdfInNewTab(blob, certificateNumber) {
+            const url = URL.createObjectURL(blob);
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `SweetNeighborCertificate_${certificateNumber}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                const newWindow = window.open(url, '_blank');
+                if (!newWindow) alert('Please allow pop-ups to view the certificate.');
+            }
+        }
+ 
+        document.getElementById('viewPrintCertificateButton').addEventListener('click', async () => {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            try {
+                const bytes = await fetch('certificates/sugarlump_app_certificate.pdf').then(res => res.arrayBuffer());
+                const pdfDoc = await PDFDocument.load(bytes);
+                const page = pdfDoc.getPages()[0];
+                const { height } = page.getSize();
+                const fontB = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+                const fontR = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                const exp = new Date(); exp.setDate(now.getDate() + 31);
+                const expStr = exp.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                const certNo = Date.now().toString().slice(-8);
+ 
+                const x = 80; const baseY = height - 250;
+                page.drawText("Tercek Real Estate Group", { x, y: baseY + 20, size: 16, font: fontB, color: rgb(8/255, 119/255, 144/255) });
+                page.drawText("Sweet Neighbor of Mine", { x, y: baseY, size: 16, font: fontB, color: rgb(254/255, 63/255, 178/255) });
+                page.drawText(`Certificate No: ${certNo}`, { x, y: baseY - 20, size: 12, font: fontR, color: rgb(8/255, 119/255, 144/255) });
+                page.drawText(`Download Date: ${dateStr}`, { x, y: baseY - 40, size: 12, font: fontR, color: rgb(8/255, 119/255, 144/255) });
+                page.drawText(`Valid until: ${expStr}`, { x, y: baseY - 60, size: 14, font: fontB, color: rgb(0.8, 0.2, 0.2) });
+ 
+                const pdfData = await pdfDoc.save();
+                openPdfInNewTab(new Blob([pdfData], { type: 'application/pdf' }), certNo);
+            } catch (e) { alert("Error loading certificate template."); }
+        });
+
+        // Helper function to handle AR activation across all models
+        function triggerAR(modelViewerId) {
+            const mv = document.getElementById(modelViewerId);
+            if (mv && mv.canActivateAR) {
+                mv.activateAR();
+            } else {
+                alert("AR features require a mobile device.");
+            }
+        }
+
+        // Attach listeners for each AR experience button
+        document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal'));
+        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed'));
+        document.getElementById('ar-button-finley').addEventListener('click', () => triggerAR('reveal-finley'));
+    });
+</script>
+</body>
+</html>
