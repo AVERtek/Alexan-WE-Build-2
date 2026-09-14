@@ -217,7 +217,7 @@
         <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Select Your:</b><a href="https://alexanwestend.com/floor-plans/" target="_blank"> Floor Plan</a></p></h2>
         <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Explore:</b><a href="https://alexanwestend.com/floor-plans/map/" target="_blank"> Interactive Map</a></p></h2>
         <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Discover:</b><a href="https://alexanwestend.com/amenities/" target="_blank"> Resort Amenities</a></p></h2>
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Email:</b><a href="mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End" onclick="getOutboundLink('mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End;'); return false;"> Us</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Email:</b><a href="mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End"> Us</a></p></h2>
         <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Call:</b><a href="tel:+15625219938" target="_blank"> 562-521-9938</a></p></h2>
         
         <h2 style="text-align: center;"><b style="color:#E69D6C;"><p style="font-family:Classico"> 600 West Broadway. Long Beach, CA. 90802</p></b></h2>
@@ -263,7 +263,7 @@
             if (isMobile) {
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `SweetNeighborCertificate_${certificateNumber}.pdf`;
+                a.download = `AlexanWestEndCertificate_${certificateNumber}.pdf`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -290,15 +290,18 @@
                 const certNo = Date.now().toString().slice(-8);
  
                 const x = 80; const baseY = height - 250;
-                <!--page.drawText("Tercek Real Estate Group", { x, y: baseY + 20, size: 16, font: fontB, color: rgb(8/255, 119/255, 144/255) }); -->
-                <!--page.drawText("Sweet Neighbor of Mine", { x, y: baseY, size: 16, font: fontB, color: rgb(254/255, 63/255, 178/255) }); -->
+                // page.drawText("Tercek Real Estate Group", { x, y: baseY + 20, size: 16, font: fontB, color: rgb(8/255, 119/255, 144/255) }); 
+                // page.drawText("Sweet Neighbor of Mine", { x, y: baseY, size: 16, font: fontB, color: rgb(254/255, 63/255, 178/255) }); 
                 page.drawText(`Certificate No: ${certNo}`, { x, y: baseY - 20, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
                 page.drawText(`Download Date: ${dateStr}`, { x, y: baseY - 40, size: 12, font: fontR, color: rgb(8/255, 119/255, 144/255) });
-                page.drawText(`Valid until: ${expStr}`, { x, y: baseY - 60, size: 14, font: fontB, color: rgb(237, 233, 229) });
+                page.drawText(`Valid until: ${expStr}`, { x, y: baseY - 60, size: 14, font: fontB, color: rgb(237/255, 233/255, 229/255) });
  
                 const pdfData = await pdfDoc.save();
                 openPdfInNewTab(new Blob([pdfData], { type: 'application/pdf' }), certNo);
-            } catch (e) { alert("Error loading certificate template."); }
+            } catch (e) { 
+                console.error("PDF Generation error:", e);
+                alert("Error loading certificate template."); 
+            }
         });
 
         // Helper function to handle AR activation across all models
