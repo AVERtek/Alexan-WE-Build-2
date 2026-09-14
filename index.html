@@ -285,7 +285,7 @@
                 
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-                const exp = new Date(); exp.setDate(now.getDate() + 31);
+                const exp = new Date(); exp.setDate(now.getDate() + 121);
                 const expStr = exp.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 const certNo = Date.now().toString().slice(-8);
  
@@ -293,7 +293,7 @@
                 // page.drawText("Tercek Real Estate Group", { x, y: baseY + 20, size: 16, font: fontB, color: rgb(8/255, 119/255, 144/255) }); 
                 // page.drawText("Sweet Neighbor of Mine", { x, y: baseY, size: 16, font: fontB, color: rgb(254/255, 63/255, 178/255) }); 
                 page.drawText(`Certificate No: ${certNo}`, { x, y: baseY - 20, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
-                page.drawText(`Download Date: ${dateStr}`, { x, y: baseY - 40, size: 12, font: fontR, color: rgb(8/255, 119/255, 144/255) });
+                page.drawText(`Download Date: ${dateStr}`, { x, y: baseY - 40, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
                 page.drawText(`Valid until: ${expStr}`, { x, y: baseY - 60, size: 14, font: fontB, color: rgb(237/255, 233/255, 229/255) });
  
                 const pdfData = await pdfDoc.save();
