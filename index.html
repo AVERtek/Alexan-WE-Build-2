@@ -302,36 +302,29 @@
             }
         });
 
-        // Synchronous AR triggers retaining custom external DOM button layout
-        document.getElementById('ar-button-studio').addEventListener('click', (e) => {
-            e.preventDefault();
-            const mv = document.getElementById('reveal');
-            if (mv && typeof mv.activateAR === 'function') {
-                mv.activateAR().catch(err => console.error("AR activation error:", err));
-            } else {
-                alert("AR features require a mobile device.");
-            }
-        });
+        // Robust AR trigger bindings for PC (alerts) and Android/iOS (intent launch)
+        function setupARButton(buttonId, modelViewerId) {
+            const btn = document.getElementById(buttonId);
+            const mv = document.getElementById(modelViewerId);
 
-        document.getElementById('ar-button-1bed').addEventListener('click', (e) => {
-            e.preventDefault();
-            const mv = document.getElementById('reveal-1bed');
-            if (mv && typeof mv.activateAR === 'function') {
-                mv.activateAR().catch(err => console.error("AR activation error:", err));
-            } else {
-                alert("AR features require a mobile device.");
+            if (btn && mv) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (typeof mv.activateAR === 'function') {
+                        mv.activateAR().catch((err) => {
+                            console.warn("AR launch intent caught:", err);
+                            alert("AR mode is initializing or not supported on this device/browser.");
+                        });
+                    } else {
+                        alert("AR features require a mobile device with AR support.");
+                    }
+                });
             }
-        });
+        }
 
-        document.getElementById('ar-button-finley').addEventListener('click', (e) => {
-            e.preventDefault();
-            const mv = document.getElementById('reveal-finley');
-            if (mv && typeof mv.activateAR === 'function') {
-                mv.activateAR().catch(err => console.error("AR activation error:", err));
-            } else {
-                alert("AR features require a mobile device.");
-            }
-        });
+        setupARButton('ar-button-studio', 'reveal');
+        setupARButton('ar-button-1bed', 'reveal-1bed');
+        setupARButton('ar-button-finley', 'reveal-finley');
     });
 </script>
 </body>
