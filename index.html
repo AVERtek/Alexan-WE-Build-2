@@ -130,13 +130,13 @@
 </head>
 <body>
 <!-- Distinct Hidden Audio Elements for Each AR Experience -->
-<audio id="ar-audio-studio" preload="auto">
+<audio id="ar-audio-studio" preload="auto" crossorigin="anonymous">
     <source src="Sound/AR Audio Mix_Studio.mp3" type="audio/mpeg">
 </audio>
-<audio id="ar-audio-1bed" preload="auto">
+<audio id="ar-audio-1bed" preload="auto" crossorigin="anonymous">
     <source src="Sound/AR Audio Mix_1Bed.mp3" type="audio/mpeg">
 </audio>
-<audio id="ar-audio-finley" preload="auto">
+<audio id="ar-audio-finley" preload="auto" crossorigin="anonymous">
     <source src="Sound/AR Audio Mix_Finley.mp3" type="audio/mpeg">
 </audio>
 
@@ -317,7 +317,7 @@
             }
         });
 
-        // AR Launch & Synchronous Audio-to-AR Binding Routine
+        // Robust AR Launch & Audio Synchronization Handler
         function initARButton(buttonId, modelViewerId, audioId) {
             const btn = document.getElementById(buttonId);
             const mv = document.getElementById(modelViewerId);
@@ -326,31 +326,19 @@
             if (btn && mv && arAudio) {
                 const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-                // Listen directly to the model-viewer's session start event to lock audio playback to AR entry
-                mv.addEventListener('ar-status', (event) => {
-                    if (event.detail.status === 'session-started') {
-                        arAudio.currentTime = 0;
-                        arAudio.play().catch(err => console.log("AR Audio playback restricted by mobile OS:", err));
-                    }
-                });
-
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
 
-                    // Desktop PC check
                     if (isDesktop) {
                         alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
                         return;
                     }
 
-                    // Prime the audio context immediately on the physical user tap gesture
+                    // 1. Prime and play audio securely within the user gesture event loop
                     arAudio.currentTime = 0;
-                    arAudio.play().then(() => {
-                        arAudio.pause();
-                        arAudio.currentTime = 0;
-                    }).catch(err => console.log("Audio priming note:", err));
+                    arAudio.play().catch(err => console.log("Audio play restriction note:", err));
 
-                    // Synchronously trigger the native AR launch intent
+                    // 2. Synchronously trigger AR session activation
                     if (mv.canActivateAR) {
                         mv.activateAR().catch(err => {
                             console.warn("AR launch intent failed:", err);
