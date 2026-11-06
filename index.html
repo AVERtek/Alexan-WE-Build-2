@@ -40,8 +40,10 @@
 
         model-viewer { --progress-bar-color: #E69D6C; }
 
-        /* ENSURE DEFAULT UN-SLOTTED BADGES ARE HIDDEN BUT CUSTOM SLOTTED BUTTONS DISPLAY */
-        model-viewer::part(default-ar-button) {
+        /* HIDE DEFAULT AR BADGE/BUTTON */
+        #ar-button, 
+        model-viewer::part(default-ar-button),
+        model-viewer > #ar-button {
             display: none !important;
         }
         
@@ -122,7 +124,7 @@
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
-            margin-top: 6px;
+            margin-top: auto;
         }
     </style>
 </head>
@@ -167,14 +169,16 @@
                 ar-placement="floor"
                 camera-orbit="0deg 0deg 105%"
                 rotation="0 1.75 0" 
-                auto-rotate
+                autoplay
+                animation-name="*"
                 camera-controls
                 interaction-prompt="none">
-                <button slot="ar-button" id="ar-btn-studio" class="ar-launch-btn">
-                    <span>View in AR</span>
-                </button>
+                <button slot="ar-button" style="display:none;"></button>
             </model-viewer>
             <div class="ar-card-title">Studio Tour</div>
+            <button id="ar-button-studio" class="ar-launch-btn">
+                <span>View in AR</span>
+            </button>
         </div>
 
         <!-- 2. 1-Bedroom Model Card -->
@@ -188,14 +192,16 @@
                 ar-placement="floor"
                 camera-orbit="0deg 0deg 105%"
                 rotation="0 1.75 0" 
-                auto-rotate
+                autoplay
+                animation-name="*"
                 camera-controls
                 interaction-prompt="none">
-                <button slot="ar-button" id="ar-btn-1bed" class="ar-launch-btn">
-                    <span>View in AR</span>
-                </button>
+                <button slot="ar-button" style="display:none;"></button>
             </model-viewer>
             <div class="ar-card-title">1 Bedroom Tour</div>
+            <button id="ar-button-1bed" class="ar-launch-btn">
+                <span>View in AR</span>
+            </button>
         </div>
 
         <!-- 3. Meet Finnley Model Card -->
@@ -209,14 +215,16 @@
                 ar-placement="floor"
                 camera-orbit="45deg 75deg 105%"
                 rotation="0 1.75 0" 
-                auto-rotate
+                autoplay
+                animation-name="*"
                 camera-controls
                 interaction-prompt="none">
-                <button slot="ar-button" id="ar-btn-finley" class="ar-launch-btn">
-                    <span>View in AR</span>
-                </button>
+                <button slot="ar-button" style="display:none;"></button>
             </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
+            <button id="ar-button-finley" class="ar-launch-btn">
+                <span>View in AR</span>
+            </button>
         </div>
     </div>
  
@@ -309,35 +317,49 @@
             }
         });
 
-        // AR Session Initialization and Desktop Click Handler
-        function setupARExperience(modelViewerId, audioId, buttonId) {
+        // AR Launch, Distinct Audio Tracking, and PC Notification Handlers
+        function initARButton(buttonId, modelViewerId, audioId) {
+            const btn = document.getElementById(buttonId);
             const mv = document.getElementById(modelViewerId);
             const arAudio = document.getElementById(audioId);
-            const btn = document.getElementById(buttonId);
 
-            if (mv && arAudio && btn) {
+            if (btn && mv && arAudio) {
                 const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-                btn.addEventListener('click', (e) => {
-                    if (isDesktop) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
-                    }
-                }, true);
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
 
-                mv.addEventListener('ar-status', (event) => {
-                    if (event.detail.status === 'session-started') {
+                    if (isDesktop) {
+                        alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
+                        return;
+                    }
+
+                    // Prime and play unique audio instantly on user tap
+                    try {
                         arAudio.currentTime = 0;
-                        arAudio.play().catch(err => console.log("Audio playback restricted:", err));
+                        await arAudio.play();
+                    } catch (err) {
+                        console.log("Audio playback note:", err);
+                    }
+
+                    // Launch mobile AR session
+                    try {
+                        if (mv.canActivateAR) {
+                            await mv.activateAR();
+                        } else {
+                            alert("AR mode requires a supported mobile device (iOS/Android with AR capabilities).");
+                        }
+                    } catch (err) {
+                        console.warn("AR launch intent failed:", err);
+                        alert("AR is initializing or unavailable on this browser. Try opening in Chrome or Safari on mobile.");
                     }
                 });
             }
         }
 
-        setupARExperience('reveal', 'ar-audio-studio', 'ar-btn-studio');
-        setupARExperience('reveal-1bed', 'ar-audio-1bed', 'ar-btn-1bed');
-        setupARExperience('reveal-finley', 'ar-audio-finley', 'ar-btn-finley');
+        initARButton('ar-button-studio', 'reveal', 'ar-audio-studio');
+        initARButton('ar-button-1bed', 'reveal-1bed', 'ar-audio-1bed');
+        initARButton('ar-button-finley', 'reveal-finley', 'ar-audio-finley');
     });
 </script>
 </body>
