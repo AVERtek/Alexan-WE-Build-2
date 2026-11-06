@@ -317,7 +317,7 @@
             }
         });
 
-        // AR Launch & Synchronous Unique Audio Trigger Handler
+        // AR Launch & Synchronous Audio-to-AR Binding Routine
         function initARButton(buttonId, modelViewerId, audioId) {
             const btn = document.getElementById(buttonId);
             const mv = document.getElementById(modelViewerId);
@@ -326,24 +326,31 @@
             if (btn && mv && arAudio) {
                 const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
+                // Listen directly to the model-viewer's session start event to lock audio playback to AR entry
+                mv.addEventListener('ar-status', (event) => {
+                    if (event.detail.status === 'session-started') {
+                        arAudio.currentTime = 0;
+                        arAudio.play().catch(err => console.log("AR Audio playback restricted by mobile OS:", err));
+                    }
+                });
+
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
 
+                    // Desktop PC check
                     if (isDesktop) {
                         alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
                         return;
                     }
 
-                    // Force-prime the specific audio element synchronously on user tap
+                    // Prime the audio context immediately on the physical user tap gesture
                     arAudio.currentTime = 0;
                     arAudio.play().then(() => {
-                        // Immediately pause and reset so it starts fresh when the AR view takes over or syncs
                         arAudio.pause();
                         arAudio.currentTime = 0;
-                        arAudio.play().catch(err => console.log("Audio resume note:", err));
-                    }).catch(err => console.log("Audio prime note:", err));
+                    }).catch(err => console.log("Audio priming note:", err));
 
-                    // Synchronously launch AR
+                    // Synchronously trigger the native AR launch intent
                     if (mv.canActivateAR) {
                         mv.activateAR().catch(err => {
                             console.warn("AR launch intent failed:", err);
