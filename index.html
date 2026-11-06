@@ -313,14 +313,14 @@
             }
         });
 
-        // AR Launch & Unique Audio Mapping Handlers
+        // AR Launch & Direct User-Gesture Audio Trigger Handlers
         function initARButton(buttonId, modelViewerId, audioId) {
             const btn = document.getElementById(buttonId);
             const mv = document.getElementById(modelViewerId);
             const arAudio = document.getElementById(audioId);
 
             if (btn && mv && arAudio) {
-                // Listen to model-viewer's native AR status change event
+                // Also listen to model-viewer's native AR status change event
                 mv.addEventListener('ar-status', (event) => {
                     if (event.detail.status === 'session-started') {
                         arAudio.currentTime = 0;
@@ -328,8 +328,18 @@
                     }
                 });
 
+                // Trigger audio directly inside the user click gesture context to bypass browser blocks
                 btn.addEventListener('click', async (e) => {
                     e.preventDefault();
+                    
+                    // Prime and play the audio immediately on user click before AR takes over
+                    try {
+                        arAudio.currentTime = 0;
+                        await arAudio.play();
+                    } catch (err) {
+                        console.log("Audio playback trigger note:", err);
+                    }
+
                     try {
                         if (mv.canActivateAR) {
                             await mv.activateAR();
