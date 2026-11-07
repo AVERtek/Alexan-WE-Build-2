@@ -317,13 +317,13 @@
             }
         });
 
-        // Robust AR Launch & Audio Synchronization Handler
+        // Non-blocking AR Launch Handler that isolates intent and audio execution
         function initARButton(buttonId, modelViewerId, audioId) {
             const btn = document.getElementById(buttonId);
             const mv = document.getElementById(modelViewerId);
             const arAudio = document.getElementById(audioId);
 
-            if (btn && mv && arAudio) {
+            if (btn && mv) {
                 const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
                 btn.addEventListener('click', (e) => {
@@ -334,18 +334,19 @@
                         return;
                     }
 
-                    // 1. Prime and play audio securely within the user gesture event loop
-                    arAudio.currentTime = 0;
-                    arAudio.play().catch(err => console.log("Audio play restriction note:", err));
+                    // Play audio asynchronously without blocking the main event loop thread
+                    if (arAudio) {
+                        arAudio.currentTime = 0;
+                        arAudio.play().catch(err => console.log("Audio deferred:", err));
+                    }
 
-                    // 2. Synchronously trigger AR session activation
+                    // Allow model-viewer to process native AR launch cleanly
                     if (mv.canActivateAR) {
-                        mv.activateAR().catch(err => {
-                            console.warn("AR launch intent failed:", err);
-                            alert("AR is initializing or unavailable on this browser. Try opening in Chrome or Safari on mobile.");
-                        });
+                        setTimeout(() => {
+                            mv.activateAR().catch(err => console.warn("AR launch intent warning:", err));
+                        }, 50);
                     } else {
-                        alert("AR mode requires a supported mobile device (iOS/Android with AR capabilities).");
+                        alert("AR mode requires a supported mobile device.");
                     }
                 });
             }
