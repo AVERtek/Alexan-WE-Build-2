@@ -129,17 +129,6 @@
     </style>
 </head>
 <body>
-<!-- Distinct Hidden Audio Elements for Each AR Experience -->
-<audio id="ar-audio-studio" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_Studio.mp3" type="audio/mpeg">
-</audio>
-<audio id="ar-audio-1bed" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_1Bed.mp3" type="audio/mpeg">
-</audio>
-<audio id="ar-audio-finley" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_Finley.mp3" type="audio/mpeg">
-</audio>
-
 <div class="container">
     <div class="card">
         <img src="images/AlexanWestEnd_Logo_White.png" style="width: 400px; max-width: 100%; height: auto;">
@@ -317,13 +306,12 @@
             }
         });
 
-        // Robust AR Launch & Audio Synchronization Handler
-        function initARButton(buttonId, modelViewerId, audioId) {
+        // Clean AR Launch Handler (delegates audio to native ?sound= query parameter & embedded USDZ)
+        function initARButton(buttonId, modelViewerId) {
             const btn = document.getElementById(buttonId);
             const mv = document.getElementById(modelViewerId);
-            const arAudio = document.getElementById(audioId);
 
-            if (btn && mv && arAudio) {
+            if (btn && mv) {
                 const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
                 btn.addEventListener('click', (e) => {
@@ -334,11 +322,7 @@
                         return;
                     }
 
-                    // 1. Prime and play audio securely within the user gesture event loop
-                    arAudio.currentTime = 0;
-                    arAudio.play().catch(err => console.log("Audio play restriction note:", err));
-
-                    // 2. Synchronously trigger AR session activation
+                    // Trigger native AR session activation
                     if (mv.canActivateAR) {
                         mv.activateAR().catch(err => {
                             console.warn("AR launch intent failed:", err);
@@ -351,9 +335,9 @@
             }
         }
 
-        initARButton('ar-button-studio', 'reveal', 'ar-audio-studio');
-        initARButton('ar-button-1bed', 'reveal-1bed', 'ar-audio-1bed');
-        initARButton('ar-button-finley', 'reveal-finley', 'ar-audio-finley');
+        initARButton('ar-button-studio', 'reveal');
+        initARButton('ar-button-1bed', 'reveal-1bed');
+        initARButton('ar-button-finley', 'reveal-finley');
     });
 </script>
 </body>
