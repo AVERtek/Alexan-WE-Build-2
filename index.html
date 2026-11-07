@@ -129,6 +129,17 @@
     </style>
 </head>
 <body>
+<!-- Distinct Audio Elements for WebXR / Browser AR Audio Synchronization -->
+<audio id="ar-audio-studio" preload="auto" crossorigin="anonymous">
+    <source src="Sound/AR Audio Mix_Studio.mp3" type="audio/mpeg">
+</audio>
+<audio id="ar-audio-1bed" preload="auto" crossorigin="anonymous">
+    <source src="Sound/AR Audio Mix_1Bed.mp3" type="audio/mpeg">
+</audio>
+<audio id="ar-audio-finley" preload="auto" crossorigin="anonymous">
+    <source src="Sound/AR Audio Mix_Finley.mp3" type="audio/mpeg">
+</audio>
+
 <div class="container">
     <div class="card">
         <img src="images/AlexanWestEnd_Logo_White.png" style="width: 400px; max-width: 100%; height: auto;">
@@ -151,7 +162,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal" 
-                src="Models/PlanwithDog_5.glb?sound=Sound/AR Audio Mix_S1_final.mp3" 
+                src="Models/PlanwithDog_5.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/PlanwithDog5 1_with_audio.usdz"
@@ -174,7 +185,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-1bed" 
-                src="Models/A4 Apartment_F.glb?sound=Sound/AR Audio Mix_A4_Ava v2 final.mp3" 
+                src="Models/A4 Apartment_F.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/audio_a4apartment_f1.usdz"
@@ -197,7 +208,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-finley" 
-                src="Models/scout_final_24.glb?sound=Sound/AR Audio Mix_Finley.mp3" 
+                src="Models/scout_final_24.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/SCOUT_FINAL_24.usdz"
@@ -306,12 +317,13 @@
             }
         });
 
-        // Clean AR Launch Handler (delegates audio to native ?sound= query parameter & embedded USDZ)
-        function initARButton(buttonId, modelViewerId) {
+        // Robust AR Launch & WebXR/Browser Audio Synchronization Handler
+        function initARButton(buttonId, modelViewerId, audioId) {
             const btn = document.getElementById(buttonId);
             const mv = document.getElementById(modelViewerId);
+            const arAudio = document.getElementById(audioId);
 
-            if (btn && mv) {
+            if (btn && mv && arAudio) {
                 const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
                 btn.addEventListener('click', (e) => {
@@ -322,7 +334,11 @@
                         return;
                     }
 
-                    // Trigger native AR session activation
+                    // 1. Prime and play audio securely within the user gesture event loop
+                    arAudio.currentTime = 0;
+                    arAudio.play().catch(err => console.log("Audio play restriction note:", err));
+
+                    // 2. Trigger AR session activation
                     if (mv.canActivateAR) {
                         mv.activateAR().catch(err => {
                             console.warn("AR launch intent failed:", err);
@@ -335,9 +351,9 @@
             }
         }
 
-        initARButton('ar-button-studio', 'reveal');
-        initARButton('ar-button-1bed', 'reveal-1bed');
-        initARButton('ar-button-finley', 'reveal-finley');
+        initARButton('ar-button-studio', 'reveal', 'ar-audio-studio');
+        initARButton('ar-button-1bed', 'reveal-1bed', 'ar-audio-1bed');
+        initARButton('ar-button-finley', 'reveal-finley', 'ar-audio-finley');
     });
 </script>
 </body>
