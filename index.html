@@ -129,16 +129,6 @@
     </style>
 </head>
 <body>
-<!-- Distinct Hidden Audio Elements for Each AR Experience -->
-<audio id="ar-audio-studio" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_Studio.mp3" type="audio/mpeg">
-</audio>
-<audio id="ar-audio-1bed" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_1Bed.mp3" type="audio/mpeg">
-</audio>
-<audio id="ar-audio-finley" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_Finley.mp3" type="audio/mpeg">
-</audio>
 
 <div class="container">
     <div class="card">
@@ -162,7 +152,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal" 
-                src="Models/PlanwithDog_5.glb?sound=Sound/AR Audio Mix_S1_final.mp3" 
+                src="Models/PlanwithDog_5.glb?sound=https://alexanwestend.com/Sound/AR%20Audio%20Mix_S1_final.mp3" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/PlanwithDog5 1_with_audio.usdz"
@@ -185,7 +175,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-1bed" 
-                src="Models/A4 Apartment_F.glb?sound=Sound/AR Audio Mix_A4_Ava v2 final.mp3" 
+                src="Models/A4 Apartment_F.glb?sound=https://alexanwestend.com/Sound/AR%20Audio%20Mix_A4_Ava%20v2%20final.mp3" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/audio_a4apartment_f1.usdz"
@@ -208,7 +198,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-finley" 
-                src="Models/scout_final_24.glb" 
+                src="Models/scout_final_24.glb?sound=https://alexanwestend.com/Sound/AR%20Audio%20Mix_Finley.mp3" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/SCOUT_FINAL_24.usdz"
@@ -305,6 +295,8 @@
                 const certNo = Date.now().toString().slice(-8);
 
                 const x = 80; const baseY = height - 250;
+                // page.drawText("Tercek Real Estate Group", { x, y: baseY + 20, size: 16, font: fontB, color: rgb(8/255, 119/255, 144/255) }); 
+                // page.drawText("Sweet Neighbor of Mine", { x, y: baseY, size: 16, font: fontB, color: rgb(254/255, 63/255, 178/255) }); 
                 page.drawText(`Certificate No: ${certNo}`, { x, y: baseY - 20, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
                 page.drawText(`Download Date: ${dateStr}`, { x, y: baseY - 40, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
                 page.drawText(`Valid until: ${expStr}`, { x, y: baseY - 60, size: 14, font: fontB, color: rgb(237/255, 233/255, 229/255) });
@@ -317,43 +309,20 @@
             }
         });
 
-        // Robust AR Launch & Audio Synchronization Handler
-        function initARButton(buttonId, modelViewerId, audioId) {
-            const btn = document.getElementById(buttonId);
+        // Helper function to handle AR activation matching your exact working configuration
+        function triggerAR(modelViewerId) {
             const mv = document.getElementById(modelViewerId);
-            const arAudio = document.getElementById(audioId);
-
-            if (btn && mv && arAudio) {
-                const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-
-                    if (isDesktop) {
-                        alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
-                        return;
-                    }
-
-                    // 1. Prime and play audio securely within the user gesture event loop
-                    arAudio.currentTime = 0;
-                    arAudio.play().catch(err => console.log("Audio play restriction note:", err));
-
-                    // 2. Synchronously trigger AR session activation
-                    if (mv.canActivateAR) {
-                        mv.activateAR().catch(err => {
-                            console.warn("AR launch intent failed:", err);
-                            alert("AR is initializing or unavailable on this browser. Try opening in Chrome or Safari on mobile.");
-                        });
-                    } else {
-                        alert("AR mode requires a supported mobile device (iOS/Android with AR capabilities).");
-                    }
-                });
+            if (mv && mv.canActivateAR) {
+                mv.activateAR().catch(err => console.warn("AR activation warning:", err));
+            } else {
+                alert("AR features require a supported mobile device.");
             }
         }
 
-        initARButton('ar-button-studio', 'reveal', 'ar-audio-studio');
-        initARButton('ar-button-1bed', 'reveal-1bed', 'ar-audio-1bed');
-        initARButton('ar-button-finley', 'reveal-finley', 'ar-audio-finley');
+        // Attach listeners for each AR experience button matching your exact IDs
+        document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal'));
+        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed'));
+        document.getElementById('ar-button-finley').addEventListener('click', () => triggerAR('reveal-finley'));
     });
 </script>
 </body>
