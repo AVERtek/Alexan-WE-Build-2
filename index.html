@@ -129,16 +129,6 @@
     </style>
 </head>
 <body>
-<!-- Distinct Hidden Audio Elements for Each Respective AR Experience -->
-<audio id="ar-audio-studio" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_Studio.mp3" type="audio/mpeg">
-</audio>
-<audio id="ar-audio-1bed" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_1Bed.mp3" type="audio/mpeg">
-</audio>
-<audio id="ar-audio-finley" preload="auto" crossorigin="anonymous">
-    <source src="Sound/AR Audio Mix_Finley.mp3" type="audio/mpeg">
-</audio>
 
 <div class="container">
     <div class="card">
@@ -162,7 +152,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal" 
-                src="Models/PlanwithDog_5.glb?sound=https://alexanwestend.com/Sound/AR%20Audio%20Mix_Studio.mp3" 
+                src="Models/PlanwithDog_5.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/PlanwithDog5 1_with_audio.usdz"
@@ -185,7 +175,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-1bed" 
-                src="Models/A4 Apartment_F.glb?sound=https://alexanwestend.com/Sound/AR%20Audio%20Mix_1Bed.mp3" 
+                src="Models/A4 Apartment_F.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/audio_a4apartment_f1.usdz"
@@ -208,7 +198,7 @@
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-finley" 
-                src="Models/scout_final_24.glb?sound=https://alexanwestend.com/Sound/AR%20Audio%20Mix_Finley.mp3" 
+                src="Models/scout_final_24.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/SCOUT_FINAL_24.usdz"
@@ -319,46 +309,20 @@
             }
         });
 
-        // Robust AR Launch & Respective Audio Synchronization Handler
-        function initARButton(buttonId, modelViewerId, audioId) {
-            const btn = document.getElementById(buttonId);
+        // Helper function to handle native AR activation matching the stable configuration
+        function triggerAR(modelViewerId) {
             const mv = document.getElementById(modelViewerId);
-            const arAudio = document.getElementById(audioId);
-
-            if (btn && mv) {
-                const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-
-                    if (isDesktop) {
-                        alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
-                        return;
-                    }
-
-                    // 1. Prime and play the specific corresponding audio track within the gesture handler
-                    if (arAudio) {
-                        arAudio.currentTime = 0;
-                        arAudio.play().catch(err => console.log("Audio play restriction note:", err));
-                    }
-
-                    // 2. Trigger native AR activation
-                    if (mv.canActivateAR) {
-                        mv.activateAR().catch(err => {
-                            console.warn("AR launch intent failed:", err);
-                            alert("AR is initializing or unavailable on this browser. Try opening in Chrome or Safari on mobile.");
-                        });
-                    } else {
-                        alert("AR mode requires a supported mobile device (iOS/Android with AR capabilities).");
-                    }
-                });
+            if (mv && mv.canActivateAR) {
+                mv.activateAR().catch(err => console.warn("AR activation warning:", err));
+            } else {
+                alert("AR features require a supported mobile device.");
             }
         }
 
-        // Hook up each button to its corresponding model and specific audio track
-        initARButton('ar-button-studio', 'reveal', 'ar-audio-studio');
-        initARButton('ar-button-1bed', 'reveal-1bed', 'ar-audio-1bed');
-        initARButton('ar-button-finley', 'reveal-finley', 'ar-audio-finley');
+        // Attach listeners for each AR experience button matching your exact IDs
+        document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal'));
+        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed'));
+        document.getElementById('ar-button-finley').addEventListener('click', () => triggerAR('reveal-finley'));
     });
 </script>
 </body>
