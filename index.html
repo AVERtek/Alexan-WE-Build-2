@@ -130,10 +130,10 @@
 </head>
 <body>
 
-<!-- Dedicated Audio Assets for Each UX -->
-<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto"></audio>
-<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto"></audio>
-<audio id="audio-finnley" src="Sound/Finnley Demo Video_audio.mp3" preload="auto"></audio>
+<!-- Dedicated Audio Assets for Each UX (Looping enabled) -->
+<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto" loop></audio>
+<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto" loop></audio>
+<audio id="audio-finnley" src="Sound/Finnley Demo Video_audio.mp3" preload="auto" loop></audio>
 
 <div class="container">
     <div class="card">
@@ -162,6 +162,7 @@
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/S1_FIN.usdz"
                 ar-placement="floor"
+                ar-scale="fixed"
                 camera-orbit="0deg 0deg 105%"
                 rotation="0 1.75 0" 
                 poster="images/S1 Poster.png"
@@ -186,6 +187,7 @@
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/A4_1BED.usdz"
                 ar-placement="floor"
+                ar-scale="fixed"
                 camera-orbit="0deg 0deg 105%"
                 rotation="0 1.75 0" 
                 poster="images/A4 Poster.png"
@@ -201,7 +203,7 @@
             </button>
         </div>
 
-        <!-- 3. Meet Finnley Model Card (Facing Camera, Scaled down 30%, and Android Camera Options configured) -->
+        <!-- 3. Meet Finnley Model Card -->
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-finnley" 
@@ -210,6 +212,7 @@
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/FINNLEY_1.usdz"
                 ar-placement="floor"
+                ar-scale="fixed"
                 scale="0.7 0.7 0.7"
                 camera-orbit="0deg 75deg 105%" 
                 rotation="0 1.75 0" 
@@ -290,14 +293,18 @@
 
         // Instantly kill audio whenever any other link or non-AR button is clicked
         document.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('click', (e) => {
+            el.addEventListener('click', () => {
                 if (!['ar-button-studio', 'ar-button-1bed', 'ar-button-finnley', 'play-pause-button'].includes(el.id)) {
                     stopAllAudio();
                 }
             });
         });
 
-        // Also stop audio if the user leaves or switches away from the browser tab
+        // Kill audio instantly when returning to the browser tab or exiting native AR view
+        window.addEventListener('focus', () => {
+            stopAllAudio();
+        });
+
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 stopAllAudio();
@@ -351,36 +358,29 @@
             }
         });
 
-        // Robust AR launcher with clean audio start and Android Scene Viewer camera controls configuration
+        // Robust AR launcher tied strictly to the AR UX buttons with sync offset & reset
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); // Kill any overlapping audio globally
 
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isAndroid = /Android/i.test(navigator.userAgent);
-
-            // Inject Android Scene Viewer intent parameters to expose native camera snapshot / video recording UI
-            if (isAndroid) {
-                let glbSrc = mv.getAttribute('src');
-                if (glbSrc && !glbSrc.includes('enable_ar_autoplay')) {
-                    // Force Android runtime flags for camera UI and interaction scaling
-                    mv.setAttribute('ar-scale', 'auto');
-                }
-            }
-
-            // Play the audio track fresh from the beginning
-            if (audio) {
-                audio.currentTime = 0;
-                audio.muted = false;
-                audio.play().catch(err => {
-                    console.warn("Audio playback blocked by browser policy:", err);
-                });
-            }
 
             if (isDesktop) {
                 alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
                 return;
+            }
+
+            // Start audio fresh from 0 with looping enabled, plus sync offset for plane anchoring lag
+            if (audio) {
+                audio.currentTime = 0;
+                audio.loop = true;
+                setTimeout(() => {
+                    audio.muted = false;
+                    audio.play().catch(err => {
+                        console.warn("Audio playback blocked by browser policy:", err);
+                    });
+                }, 500); // 500ms anchor synchronization window
             }
 
             if (mv && mv.canActivateAR) {
@@ -393,7 +393,7 @@
             }
         }
 
-        // Attach event listeners passing their unique audio tracks
+        // Attach event listeners strictly to the custom AR launch buttons (not model cards)
         document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
         document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
         document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
