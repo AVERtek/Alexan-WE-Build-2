@@ -130,10 +130,10 @@
 </head>
 <body>
 
-<!-- Dedicated Audio Assets for Each UX -->
-<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto"></audio>
-<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto"></audio>
-<audio id="audio-finnley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto"></audio>
+<!-- Dedicated Audio Assets for Each UX (Looping silently until AR is engaged) -->
+<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto" loop muted></audio>
+<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto" loop muted></audio>
+<audio id="audio-finnley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto" loop muted></audio>
 
 <div class="container">
     <div class="card">
@@ -227,9 +227,9 @@
     </div>
  
     <div class="card" style="margin-top: 20px;">
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Select Your:</b><a href="https://alexanwestend.com/floor-plans/" target="_blank" class="nav-link"> Floor Plan</a></p></h2>
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Explore:</b><a href="https://alexanwestend.com/floor-plans/map/" target="_blank" class="nav-link"> Interactive Map</a></p></h2>
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Discover:</b><a href="https://alexanwestend.com/amenities/" target="_blank" class="nav-link"> Resort Amenities</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Select Your:</b><a href="https://alexanwestend.com/floor-plans/" target="_blank"> Floor Plan</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Explore:</b><a href="https://alexanwestend.com/floor-plans/map/" target="_blank"> Interactive Map</a></p></h2>
+        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Discover:</b><a href="https://alexanwestend.com/amenities/" target="_blank"> Resort Amenities</a></p></h2>
         <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Email:</b><a href="mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End"> Us</a></p></h2>
         <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Call:</b><a href="tel:+15625219938" target="_blank"> 562-521-9938</a></p></h2>
         
@@ -263,17 +263,18 @@
         const playBtn = document.getElementById('play-pause-button');
         const allAudioElements = document.querySelectorAll('audio');
 
-        // Helper function to stop all audio tracks across the page immediately
+        // Helper function to stop and reset all audio tracks across the page
         function stopAllAudio() {
             allAudioElements.forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
+                audio.muted = true; // reset back to muted background state
             });
         }
 
         function toggleVideo() {
             if (video.paused) { 
-                stopAllAudio(); // Stop any AR audio if video starts
+                stopAllAudio(); 
                 video.play(); 
                 video.muted = false; 
                 playBtn.style.display = "none"; 
@@ -289,7 +290,9 @@
         // Stop all audio if user clicks any page link or footer button
         document.querySelectorAll('a, button').forEach(el => {
             el.addEventListener('click', () => {
-                stopAllAudio();
+                if (el.id !== 'ar-button-studio' && el.id !== 'ar-button-1bed' && el.id !== 'ar-button-finnley' && el.id !== 'play-pause-button') {
+                    stopAllAudio();
+                }
             });
         });
 
@@ -340,20 +343,40 @@
             }
         });
 
-        // Helper function for stable AR activation and dedicated audio playback per UX
-        function triggerAR(modelViewerId, audioId) {
-            // Stop any currently playing audio tracks first so they never overlap
-            stopAllAudio();
+        // Setup synchronization: When model-viewer progress completes (reaches 1.0), start looping audio silently in background
+        function setupAudioSync(modelViewerId, audioId) {
+            const mv = document.getElementById(modelViewerId);
+            const audio = document.getElementById(audioId);
 
+            if (mv && audio) {
+                mv.addEventListener('progress', (event) => {
+                    // When progress bar completes (loaded = 1)
+                    if (event.detail.totalProgress === 1) {
+                        if (audio.paused) {
+                            audio.muted = true;
+                            audio.play().catch(err => console.log("Background sync waiting for interaction:", err));
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize background audio counters for all three models
+        setupAudioSync('reveal', 'audio-studio');
+        setupAudioSync('reveal-1bed', 'audio-1bed');
+        setupAudioSync('reveal-finnley', 'audio-finnley');
+
+        // Helper function for stable AR activation and unmuting audio on launch
+        function triggerAR(modelViewerId, audioId) {
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-            // Play the unique audio track assigned to this specific UX
+            // Unmute and play the already-running synchronized audio track when AR is engaged
             if (audio) {
-                audio.currentTime = 0;
+                audio.muted = false;
                 audio.play().catch(err => {
-                    console.warn("Audio autoplay blocked by browser policy:", err);
+                    console.warn("Audio playback blocked by browser policy:", err);
                 });
             }
 
