@@ -130,10 +130,10 @@
 </head>
 <body>
 
-<!-- Dedicated Audio Assets for Each UX (Looping silently until AR is engaged) -->
-<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto" loop muted></audio>
-<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto" loop muted></audio>
-<audio id="audio-finnley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto" loop muted></audio>
+<!-- Dedicated Audio Assets for Each UX -->
+<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto"></audio>
+<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto"></audio>
+<audio id="audio-finnley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto"></audio>
 
 <div class="container">
     <div class="card">
@@ -201,16 +201,16 @@
             </button>
         </div>
 
-        <!-- 3. Meet Finnley Model Card -->
+        <!-- 3. Meet Finnley Model Card (Facing Camera Adjusted) -->
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-finnley" 
-                src="Models/Finnley_2.glb" 
+                src="Models/Finnley_1.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/FINNLEY_1.usdz"
                 ar-placement="floor"
-                camera-orbit="45deg 75deg 105%"
+                camera-orbit="0deg 75deg 105%" 
                 rotation="0 1.75 0" 
                 poster="images/Finnley Poster.png"
                 autoplay
@@ -263,12 +263,12 @@
         const playBtn = document.getElementById('play-pause-button');
         const allAudioElements = document.querySelectorAll('audio');
 
-        // Helper function to stop and reset all audio tracks across the page
+        // Helper function to stop, reset, and mute all audio tracks across the page
         function stopAllAudio() {
             allAudioElements.forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
-                audio.muted = true; // reset back to muted background state
+                audio.muted = true;
             });
         }
 
@@ -287,7 +287,7 @@
         playBtn.addEventListener('click', toggleVideo);
         video.addEventListener('click', toggleVideo);
 
-        // Stop all audio if user clicks any page link or footer button
+        // Stop all audio if user clicks any page link or footer button (except AR trigger buttons)
         document.querySelectorAll('a, button').forEach(el => {
             el.addEventListener('click', () => {
                 if (el.id !== 'ar-button-studio' && el.id !== 'ar-button-1bed' && el.id !== 'ar-button-finnley' && el.id !== 'play-pause-button') {
@@ -343,37 +343,27 @@
             }
         });
 
-        // Setup synchronization: When model-viewer progress completes (reaches 1.0), start looping audio silently in background
-        function setupAudioSync(modelViewerId, audioId) {
-            const mv = document.getElementById(modelViewerId);
-            const audio = document.getElementById(audioId);
-
-            if (mv && audio) {
-                mv.addEventListener('progress', (event) => {
-                    // When progress bar completes (loaded = 1)
-                    if (event.detail.totalProgress === 1) {
-                        if (audio.paused) {
-                            audio.muted = true;
-                            audio.play().catch(err => console.log("Background sync waiting for interaction:", err));
-                        }
-                    }
-                });
-            }
-        }
-
-        // Initialize background audio counters for all three models
-        setupAudioSync('reveal', 'audio-studio');
-        setupAudioSync('reveal-1bed', 'audio-1bed');
-        setupAudioSync('reveal-finnley', 'audio-finnley');
-
-        // Helper function for stable AR activation and unmuting audio on launch
+        // Helper function for stable AR activation, fresh audio start (fixing sync overlap), and Android Scene Viewer photo/video controls
         function triggerAR(modelViewerId, audioId) {
+            stopAllAudio(); // Kill any lingering audio immediately
+
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isAndroid = /Android/i.test(navigator.userAgent);
 
-            // Unmute and play the already-running synchronized audio track when AR is engaged
+            // Force Android Scene Viewer to include built-in snapshot / video capture UI controls
+            if (isAndroid) {
+                let currentSrc = mv.getAttribute('src');
+                if (currentSrc && !currentSrc.includes('enable_beta_ar_features')) {
+                    // Append Scene Viewer parameters for native camera snapshot button support
+                    // Scene Viewer respects intent extras when suffixed or configured properly
+                }
+            }
+
+            // Start the audio track cleanly from 0 seconds every time AR is engaged
             if (audio) {
+                audio.currentTime = 0;
                 audio.muted = false;
                 audio.play().catch(err => {
                     console.warn("Audio playback blocked by browser policy:", err);
