@@ -284,7 +284,7 @@
         document.getElementById('viewPrintCertificateButton').addEventListener('click', async () => {
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             try {
-                const bytes = await fetch('certificates/Alexan West End Certificate.pdf').then(res => res.arrayBuffer());
+                const bytes = await fetch('certificates/AWE_Certificate_fin.pdf').then(res => res.arrayBuffer());
                 const pdfDoc = await PDFDocument.load(bytes);
                 const page = pdfDoc.getPages()[0];
                 const { height } = page.getSize();
