@@ -204,7 +204,7 @@
         <!-- 3. Meet Finnley Model Card -->
         <div class="ar-slider-card">
             <model-viewer
-                id="reveal-Finnley" 
+                id="reveal-finnley" 
                 src="Models/Finnley_1.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
@@ -220,7 +220,7 @@
                 <button slot="ar-button" style="display:none;"></button>
             </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
-            <button id="ar-button-Finnley" class="ar-launch-btn">
+            <button id="ar-button-finnley" class="ar-launch-btn">
                 <span>View in AR</span>
             </button>
         </div>
@@ -315,25 +315,18 @@
             }
         });
 
-        // Play the unique audio track assigned to this specific UX with error logging
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(err => {
-                    console.warn("Audio playback blocked or file not found:", err);
-                    alert("Audio playback error: Check file path or format.");
-                });
-            }
-        
         // Helper function for stable AR activation and dedicated audio playback per UX
         function triggerAR(modelViewerId, audioId) {
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-            // Play the unique audio track assigned to this specific UX
+            // Play the unique audio track assigned to this specific UX with browser autoplay policy handling
             if (audio) {
                 audio.currentTime = 0;
-                audio.play().catch(err => console.log("Audio autoplay restricted:", err));
+                audio.play().catch(err => {
+                    console.warn("Audio autoplay blocked by browser policy:", err);
+                });
             }
 
             if (isDesktop) {
