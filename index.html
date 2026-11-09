@@ -131,9 +131,9 @@
 <body>
 
 <!-- Dedicated Audio Assets for Each UX -->
-<audio id="audio-studio" src="Audio/studio_track.wav" preload="auto"></audio>
-<audio id="audio-1bed" src="Audio/1bed_track.wav" preload="auto"></audio>
-<audio id="audio-finley" src="Audio/finley_track.wav" preload="auto"></audio>
+<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto"></audio>
+<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto"></audio>
+<audio id="audio-finley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto"></audio>
 
 <div class="container">
     <div class="card">
@@ -315,6 +315,15 @@
             }
         });
 
+        // Play the unique audio track assigned to this specific UX with error logging
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(err => {
+                    console.warn("Audio playback blocked or file not found:", err);
+                    alert("Audio playback error: Check file path or format.");
+                });
+            }
+        
         // Helper function for stable AR activation and dedicated audio playback per UX
         function triggerAR(modelViewerId, audioId) {
             const mv = document.getElementById(modelViewerId);
