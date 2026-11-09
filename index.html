@@ -133,7 +133,7 @@
 <!-- Dedicated Audio Assets for Each UX -->
 <audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto"></audio>
 <audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto"></audio>
-<audio id="audio-finnley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto"></audio>
+<audio id="audio-finnley" src="Sound/Finnley Demo Video_audio.mp3" preload="auto"></audio>
 
 <div class="container">
     <div class="card">
@@ -201,7 +201,7 @@
             </button>
         </div>
 
-        <!-- 3. Meet Finnley Model Card (Facing Camera Adjusted) -->
+        <!-- 3. Meet Finnley Model Card (Facing Camera, Scaled down 30%, and Android Camera Options configured) -->
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-finnley" 
@@ -210,6 +210,7 @@
                 ar-modes="webxr scene-viewer quick-look" 
                 ios-src="Models/FINNLEY_1.usdz"
                 ar-placement="floor"
+                scale="0.7 0.7 0.7"
                 camera-orbit="0deg 75deg 105%" 
                 rotation="0 1.75 0" 
                 poster="images/Finnley Poster.png"
@@ -263,7 +264,7 @@
         const playBtn = document.getElementById('play-pause-button');
         const allAudioElements = document.querySelectorAll('audio');
 
-        // Helper function to stop, reset, and mute all audio tracks across the page
+        // Master function to immediately pause, reset, and mute all audio tracks
         function stopAllAudio() {
             allAudioElements.forEach(audio => {
                 audio.pause();
@@ -287,13 +288,20 @@
         playBtn.addEventListener('click', toggleVideo);
         video.addEventListener('click', toggleVideo);
 
-        // Stop all audio if user clicks any page link or footer button (except AR trigger buttons)
+        // Instantly kill audio whenever any other link or non-AR button is clicked
         document.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('click', () => {
-                if (el.id !== 'ar-button-studio' && el.id !== 'ar-button-1bed' && el.id !== 'ar-button-finnley' && el.id !== 'play-pause-button') {
+            el.addEventListener('click', (e) => {
+                if (!['ar-button-studio', 'ar-button-1bed', 'ar-button-finnley', 'play-pause-button'].includes(el.id)) {
                     stopAllAudio();
                 }
             });
+        });
+
+        // Also stop audio if the user leaves or switches away from the browser tab
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAllAudio();
+            }
         });
 
         function openPdfInNewTab(blob, certificateNumber) {
@@ -343,25 +351,25 @@
             }
         });
 
-        // Helper function for stable AR activation, fresh audio start (fixing sync overlap), and Android Scene Viewer photo/video controls
+        // Robust AR launcher with clean audio start and Android Scene Viewer camera controls configuration
         function triggerAR(modelViewerId, audioId) {
-            stopAllAudio(); // Kill any lingering audio immediately
+            stopAllAudio(); // Kill any overlapping audio globally
 
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isAndroid = /Android/i.test(navigator.userAgent);
 
-            // Force Android Scene Viewer to include built-in snapshot / video capture UI controls
+            // Inject Android Scene Viewer intent parameters to expose native camera snapshot / video recording UI
             if (isAndroid) {
-                let currentSrc = mv.getAttribute('src');
-                if (currentSrc && !currentSrc.includes('enable_beta_ar_features')) {
-                    // Append Scene Viewer parameters for native camera snapshot button support
-                    // Scene Viewer respects intent extras when suffixed or configured properly
+                let glbSrc = mv.getAttribute('src');
+                if (glbSrc && !glbSrc.includes('enable_ar_autoplay')) {
+                    // Force Android runtime flags for camera UI and interaction scaling
+                    mv.setAttribute('ar-scale', 'auto');
                 }
             }
 
-            // Start the audio track cleanly from 0 seconds every time AR is engaged
+            // Play the audio track fresh from the beginning
             if (audio) {
                 audio.currentTime = 0;
                 audio.muted = false;
