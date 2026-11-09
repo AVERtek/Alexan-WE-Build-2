@@ -380,7 +380,7 @@
                     audio.play().catch(err => {
                         console.warn("Audio playback blocked by browser policy:", err);
                     });
-                }, 500); // 500ms anchor synchronization window
+                }, 1500); // +000ms anchor synchronization window
             }
 
             if (mv && mv.canActivateAR) {
