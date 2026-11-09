@@ -130,6 +130,11 @@
 </head>
 <body>
 
+<!-- Dedicated Audio Assets for Each UX -->
+<audio id="audio-studio" src="Audio/studio_track.wav" preload="auto"></audio>
+<audio id="audio-1bed" src="Audio/1bed_track.wav" preload="auto"></audio>
+<audio id="audio-finley" src="Audio/finley_track.wav" preload="auto"></audio>
+
 <div class="container">
     <div class="card">
         <img src="images/AlexanWestEnd_Logo_White.png" style="width: 400px; max-width: 100%; height: auto;">
@@ -310,10 +315,17 @@
             }
         });
 
-        // Helper function for stable AR activation and desktop fallback
-        function triggerAR(modelViewerId) {
+        // Helper function for stable AR activation and dedicated audio playback per UX
+        function triggerAR(modelViewerId, audioId) {
             const mv = document.getElementById(modelViewerId);
+            const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            // Play the unique audio track assigned to this specific UX
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(err => console.log("Audio autoplay restricted:", err));
+            }
 
             if (isDesktop) {
                 alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
@@ -330,10 +342,10 @@
             }
         }
 
-        // Attach event listeners for each AR launch button
-        document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal'));
-        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed'));
-        document.getElementById('ar-button-finley').addEventListener('click', () => triggerAR('reveal-finley'));
+        // Attach event listeners passing their unique audio tracks
+        document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
+        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
+        document.getElementById('ar-button-finley').addEventListener('click', () => triggerAR('reveal-finley', 'audio-finley'));
     });
 </script>
 </body>
