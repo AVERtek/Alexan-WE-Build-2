@@ -133,7 +133,7 @@
 <!-- Dedicated Audio Assets for Each UX -->
 <audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto"></audio>
 <audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto"></audio>
-<audio id="audio-finley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto"></audio>
+<audio id="audio-finnley" src="Sound/Finnley_Elle_14barkFin2pant.mp3" preload="auto"></audio>
 
 <div class="container">
     <div class="card">
@@ -204,7 +204,7 @@
         <!-- 3. Meet Finnley Model Card -->
         <div class="ar-slider-card">
             <model-viewer
-                id="reveal-finley" 
+                id="reveal-Finnley" 
                 src="Models/Finnley_1.glb" 
                 ar
                 ar-modes="webxr scene-viewer quick-look" 
@@ -220,7 +220,7 @@
                 <button slot="ar-button" style="display:none;"></button>
             </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
-            <button id="ar-button-finley" class="ar-launch-btn">
+            <button id="ar-button-Finnley" class="ar-launch-btn">
                 <span>View in AR</span>
             </button>
         </div>
@@ -354,7 +354,7 @@
         // Attach event listeners passing their unique audio tracks
         document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
         document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
-        document.getElementById('ar-button-finley').addEventListener('click', () => triggerAR('reveal-finley', 'audio-finley'));
+        document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
     });
 </script>
 </body>
