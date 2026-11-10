@@ -377,7 +377,7 @@
                setTimeout(() => {
                     audio.muted = false;
                     audio.play().catch(err => console.warn("Audio error:", err));
-                }, 500);
+                }, 300);
             }
  
             if (mv && mv.canActivateAR) {
@@ -390,7 +390,13 @@
             }
         }
  
-        // Tailored launcher for Finnley with optimized sync delay to align audio launch with AR plane detection
+        // -------------------------------------------------------------------------
+        // ROBUST FINNLEY AR LAUNCHER WITH EXPERIMENTAL DELAY OFFSET
+        // -------------------------------------------------------------------------
+        // Adjust AUDIO_DELAY_MS below to fine-tune sync on different mobile devices:
+        // Increase value if audio is lagging behind; decrease if animation is too fast.
+        const AUDIO_DELAY_MS = 2500; 
+
         function triggerFinnleyAR() {
             stopAllAudio();
             const mv = document.getElementById('reveal-finnley');
@@ -402,15 +408,7 @@
                 return;
             }
  
-            if (audio) {
-                audio.currentTime = 0;
-                audio.loop = true;
-                setTimeout(() => {
-                    audio.muted = false;
-                    audio.play().catch(err => console.warn("Finnley audio error:", err));
-                }, 1200);
-            }
- 
+            // 1. Trigger the native AR viewer instantly so plane detection / hardware boot starts
             if (mv && mv.canActivateAR) {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
@@ -418,6 +416,17 @@
                 });
             } else {
                 alert("AR features require a supported mobile device with AR capabilities.");
+                return;
+            }
+ 
+            // 2. Play audio after the configurable delay offset to match the 3D model's start head
+            if (audio) {
+                audio.currentTime = 0;
+                audio.loop = true;
+                setTimeout(() => {
+                    audio.muted = false;
+                    audio.play().catch(err => console.warn("Finnley audio promise error:", err));
+                }, AUDIO_DELAY_MS);
             }
         }
  
