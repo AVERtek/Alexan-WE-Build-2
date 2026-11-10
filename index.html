@@ -133,7 +133,7 @@
 </head>
 <body>
  
-<!-- Dedicated Audio Assets for Each UX (Preloaded safely for iOS) -->
+<!-- Dedicated Audio Assets for Each UX (Preloaded safely for iOS/Android fallback) -->
 <audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto" loop></audio>
 <audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto" loop></audio>
 <audio id="audio-finnley" src="Sound/Finnley Demo Video_audio_fin3.mp3" preload="auto" loop></audio>
@@ -181,14 +181,14 @@
             </button>
         </div>
  
-        <!-- 2. 1-Bedroom Model Card -->
+        <!-- 2. 1-Bedroom Model Card (Using USDZ with Embedded Audio for iOS Test) -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-1bed" 
                src="Models/A4_1bed.glb" 
                ar
                ar-modes="scene-viewer quick-look webxr" 
-               ios-src="Models/A4_1BED.usdz"
+               ios-src="Models/A4_1BED_with_audio.usdz"
                ar-placement="floor"
                ar-scale="auto"
                camera-orbit="0deg 0deg 105%"
@@ -281,7 +281,6 @@
             if (video.paused) { 
                 stopAllAudio(); 
                 video.play().then(() => {
-                    // Attempt native fullscreen mode on mobile rotation / play
                     if (video.requestFullscreen) {
                         video.requestFullscreen().catch(() => {});
                     } else if (video.webkitEnterFullscreen) {
@@ -299,13 +298,11 @@
         playBtn.addEventListener('click', toggleVideo);
         video.addEventListener('click', toggleVideo);
 
-        // Reset video to beginning and show play button again when playback ends
         video.addEventListener('ended', () => {
             video.currentTime = 0;
             playBtn.style.display = "block";
         });
  
-        // Instantly kill audio whenever any other link or non-AR button is clicked
         document.querySelectorAll('a, button').forEach(el => {
            el.addEventListener('click', () => {
                 if (!['ar-button-studio', 'ar-button-1bed', 'ar-button-finnley', 'play-pause-button'].includes(el.id)) {
@@ -314,7 +311,6 @@
            });
         });
  
-        // Kill audio instantly when returning to the browser tab or exiting native AR view
         window.addEventListener('focus', () => {
            stopAllAudio();
         });
@@ -372,20 +368,21 @@
             }
         });
 
-        // Universal AR Launcher for Android & iOS (Restored non-blocking trigger order)
+        // Universal AR Launcher (Smart-routing: Skips external web audio on iOS for 1-Bedroom since audio is embedded in USDZ)
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
  
             if (isDesktop) {
                alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
                return;
             }
  
-            // 1. Launch native AR viewer immediately (prevents iOS user-gesture timeout & Android stutter)
+            // 1. Launch native AR viewer immediately
             if (mv && mv.canActivateAR) {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
@@ -395,8 +392,10 @@
                 alert("AR features require a supported mobile device with AR capabilities.");
             }
 
-            // 2. Play audio concurrently in the background
-            if (audio) {
+            // 2. Play web audio concurrently ONLY if it's NOT the embedded-audio 1-Bedroom model on iOS
+            const isEmbeddedIOSOneBed = (isIOS && modelViewerId === 'reveal-1bed');
+            
+            if (!isEmbeddedIOSOneBed && audio) {
                 audio.currentTime = 0;
                 audio.loop = true;
                 audio.muted = false;
