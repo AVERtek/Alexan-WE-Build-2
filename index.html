@@ -148,7 +148,7 @@
     <p style="text-align:center; font-family: 'Classico'; font-weight: bold; color: #EDE9E5; font-size: 16px;">Make sure Wi-Fi and sound is on!</p>
  
     <div style="position: relative; width: 100%;">
-        <video id="video-overlay" style="width: 100%;" poster="images/MR-Demo_start screen.png" playsinline muted>
+        <video id="video-overlay" style="width: 100%;" poster="images/MR-Demo_start screen.png" playsinline webkit-playsinline muted>
             <source src="Video/AWE Movie 1.mp4" type="video/mp4">
         </video>
         <button id="play-pause-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; padding: 10px 15px; background: #E69D6C; color: white; border:none; font-size: 30px; cursor:pointer;" aria-label="Play Video">  ▶  </button>
@@ -163,7 +163,7 @@
                id="reveal" 
                src="Models/S1_fin.glb" 
                ar
-               ar-modes="quick-look scene-viewer webxr" 
+               ar-modes="scene-viewer quick-look webxr" 
                ios-src="Models/S1_FIN.usdz"
                ar-placement="floor"
                ar-scale="auto"
@@ -187,7 +187,7 @@
                id="reveal-1bed" 
                src="Models/A4_1bed.glb" 
                ar
-               ar-modes="quick-look scene-viewer webxr" 
+               ar-modes="scene-viewer quick-look webxr" 
                ios-src="Models/A4_1BED.usdz"
                ar-placement="floor"
                ar-scale="auto"
@@ -209,9 +209,9 @@
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-finnley" 
-               src="Models/Finnly Dog Full Scene.GLTF.glb" 
+               src="Models/Finnly_Dog_Full_Scene.glb" 
                ar
-               ar-modes="quick-look scene-viewer webxr" 
+               ar-modes="scene-viewer quick-look webxr" 
                ios-src="Models/FINNLEY_1.usdz"
                ar-placement="floor"
                ar-scale="auto"
@@ -280,7 +280,14 @@
         function toggleVideo() {
             if (video.paused) { 
                 stopAllAudio(); 
-                video.play(); 
+                video.play().then(() => {
+                    // Attempt native fullscreen mode on mobile rotation / play
+                    if (video.requestFullscreen) {
+                        video.requestFullscreen().catch(() => {});
+                    } else if (video.webkitEnterFullscreen) {
+                        video.webkitEnterFullscreen();
+                    }
+                }).catch(err => console.warn("Video play error:", err)); 
                 video.muted = false; 
                 playBtn.style.display = "none"; 
             } else { 
@@ -365,9 +372,9 @@
             }
         });
 
-        // Foolproof iOS/Android AR Launcher for Studio and 1-Bedroom
+        // Universal AR Launcher for Android & iOS (Restored non-blocking trigger order)
         function triggerAR(modelViewerId, audioId) {
-           stopAllAudio(); 
+            stopAllAudio(); 
  
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
@@ -378,67 +385,28 @@
                return;
             }
  
-            if (audio) {
-               audio.currentTime = 0;
-               audio.loop = true;
-               audio.muted = false;
-               // Ensure audio buffer is forced before launching native container on iOS
-               audio.play().then(() => {
-                   if (mv && mv.canActivateAR) {
-                       mv.activateAR().catch(err => {
-                           console.warn("AR activation warning:", err);
-                           alert("AR is initializing or unavailable on this browser.");
-                       });
-                   }
-               }).catch(err => {
-                   console.warn("Audio play restriction on iOS:", err);
-                   // Fallback: Launch AR even if audio policy blocks autoplay
-                   if (mv && mv.canActivateAR) {
-                       mv.activateAR();
-                   }
-               });
-            } else if (mv && mv.canActivateAR) {
-               mv.activateAR();
+            // 1. Launch native AR viewer immediately (prevents iOS user-gesture timeout & Android stutter)
+            if (mv && mv.canActivateAR) {
+                mv.activateAR().catch(err => {
+                    console.warn("AR activation warning:", err);
+                    alert("AR is initializing or unavailable on this browser.");
+                });
+            } else {
+                alert("AR features require a supported mobile device with AR capabilities.");
             }
-        }
- 
-        // Foolproof Finnley Launcher with Synchronized Promise Handling
-        function triggerFinnleyAR() {
-            stopAllAudio();
-            const mv = document.getElementById('reveal-finnley');
-            const audio = document.getElementById('audio-finnley');
-            const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
- 
-            if (isDesktop) {
-                alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
-                return;
-            }
- 
+
+            // 2. Play audio concurrently in the background
             if (audio) {
                 audio.currentTime = 0;
                 audio.loop = true;
                 audio.muted = false;
-                audio.play().then(() => {
-                    if (mv && mv.canActivateAR) {
-                        mv.activateAR().catch(err => {
-                            console.warn("AR activation warning:", err);
-                            alert("AR is initializing or unavailable on this browser.");
-                        });
-                    }
-                }).catch(err => {
-                    console.warn("Finnley audio restriction on iOS:", err);
-                    if (mv && mv.canActivateAR) {
-                        mv.activateAR();
-                    }
-                });
-            } else if (mv && mv.canActivateAR) {
-                mv.activateAR();
+                audio.play().catch(err => console.warn("Audio playback restriction:", err));
             }
         }
  
        document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
-       document.getElementById('ar-button-finnley').addEventListener('click', () => triggerFinnleyAR());
+       document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
     });
 </script>
 </body>
