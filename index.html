@@ -165,6 +165,7 @@
                rotation="0 1.75 0" 
                poster="images/S1 Poster.png"
                loading="lazy"
+               autoplay
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
@@ -189,6 +190,7 @@
                rotation="0 1.75 0" 
                poster="images/A4 Poster.png"
                loading="lazy"
+               autoplay
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
@@ -214,6 +216,7 @@
                rotation="0 1.75 0" 
                poster="images/Finnley Poster.png"
                loading="lazy"
+               autoplay
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
@@ -361,7 +364,7 @@
             }
         });
 
-        // Stable Cross-Platform AR Trigger (Synchronous activation + webxr/scene-viewer/quick-look order)
+        // Stable Cross-Platform AR Trigger
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
@@ -375,7 +378,7 @@
                return;
             }
  
-            // 1. Immediately trigger native AR viewer synchronously for Android/iOS gesture validation
+            // 1. Immediately trigger native AR viewer synchronously
             if (mv && mv.canActivateAR) {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
