@@ -126,33 +126,18 @@
             box-sizing: border-box;
             margin-top: auto;
         }
-
-        /* Wake Finnley Overlay Button Style */
-        #wake-finnley-container {
-            display: none;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 99999;
-        }
-        .wake-btn {
-            background-color: #E69D6C;
+        .wake-sub-btn {
+            background-color: #ede9e5;
             color: #571B25;
-            border: 2px solid #EDE9E5;
-            border-radius: 30px;
-            padding: 12px 24px;
+            border: 1px solid #E69D6C;
+            border-radius: 6px;
+            padding: 4px;
             font-family: 'ChronicleDeck-Semibold';
-            font-size: 16px;
+            font-size: 11px;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             cursor: pointer;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            width: 100%;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -161,12 +146,7 @@
 <!-- Dedicated Audio Assets for Each UX (Looping enabled) -->
 <audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto" loop></audio>
 <audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto" loop></audio>
-<audio id="audio-finnley" src="Sound/Finnley Demo Video_audio_fin.mp3" preload="auto" loop></audio>
-
-<!-- Wake Finnley Interactive Control Overlay -->
-<div id="wake-finnley-container">
-    <button id="wake-finnley-btn" class="wake-btn">🐶 Wake Finnley</button>
-</div>
+<audio id="audio-finnley" src="Sound/Finnley Demo Video_audio.mp3" preload="auto" loop></audio>
 
 <div class="container">
     <div class="card">
@@ -236,7 +216,7 @@
             </button>
         </div>
 
-        <!-- 3. Meet Finnley Model Card -->
+        <!-- 3. Meet Finnley Model Card with "Wake Finnley" Control -->
         <div class="ar-slider-card">
             <model-viewer
                 id="reveal-finnley" 
@@ -259,6 +239,9 @@
             <div class="ar-card-title">Meet Finnley</div>
             <button id="ar-button-finnley" class="ar-launch-btn">
                 <span>View in AR</span>
+            </button>
+            <button id="wake-finnley-btn" class="wake-sub-btn">
+                <span>🐶 Wake Finnley</span>
             </button>
         </div>
     </div>
@@ -299,8 +282,6 @@
         const video = document.getElementById('video-overlay');
         const playBtn = document.getElementById('play-pause-button');
         const allAudioElements = document.querySelectorAll('audio');
-        const wakeContainer = document.getElementById('wake-finnley-container');
-        const wakeBtn = document.getElementById('wake-finnley-btn');
         const finnleyMv = document.getElementById('reveal-finnley');
         const finnleyAudio = document.getElementById('audio-finnley');
 
@@ -311,7 +292,6 @@
                 audio.currentTime = 0;
                 audio.muted = true;
             });
-            wakeContainer.style.display = 'none';
         }
 
         function toggleVideo() {
@@ -428,7 +408,7 @@
             }
         }
 
-        // Special Launcher for Finnley that exposes the "Wake Finnley" interactive control button
+        // Standard AR trigger for Finnley's View in AR button
         function triggerFinnleyAR() {
             stopAllAudio();
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -438,30 +418,24 @@
                 return;
             }
 
-            // Show the Wake Finnley control overlay on screen
-            wakeContainer.style.display = 'block';
-
             if (finnleyMv && finnleyMv.canActivateAR) {
                 finnleyMv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
-                    wakeContainer.style.display = 'none';
                     alert("AR is initializing or unavailable on this browser.");
                 });
             } else {
-                wakeContainer.style.display = 'none';
                 alert("AR features require a supported mobile device with AR capabilities.");
             }
         }
 
-        // When user taps "Wake Finnley", reset and start audio and animation perfectly together at 0
-        wakeBtn.addEventListener('click', () => {
+        // "Wake Finnley" button: user taps this to start audio and reset animation together from 0 precisely
+        document.getElementById('wake-finnley-btn').addEventListener('click', () => {
             if (finnleyAudio) {
                 finnleyAudio.currentTime = 0;
                 finnleyAudio.loop = true;
                 finnleyAudio.muted = false;
                 finnleyAudio.play().catch(err => console.warn("Finnley Audio play blocked:", err));
             }
-            // Reset model-viewer animation time to start from 0
             if (finnleyMv) {
                 finnleyMv.currentTime = 0;
             }
