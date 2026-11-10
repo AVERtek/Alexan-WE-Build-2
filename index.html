@@ -129,17 +129,17 @@
     </style>
 </head>
 <body>
-
+ 
 <!-- Dedicated Audio Assets for Each UX (Looping enabled) -->
 <audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto" loop></audio>
 <audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto" loop></audio>
 <audio id="audio-finnley" src="Sound/Finnley Demo Video_audio_fin2.mp3" preload="auto" loop></audio>
-
+ 
 <div class="container">
     <div class="card">
         <img src="images/AlexanWestEnd_Logo_White.png" style="width: 400px; max-width: 100%; height: auto;">
     </div>
-
+ 
     <p style="text-align:center; font-family: 'Classico'; font-weight: bold; color: #E69D6C; font-size: 26px;">Brand New Studio, 1-, 2-, and 3-Bedroom Residences in Downtown Long Beach.</p>
     <h1 class="hunt-header">LEASE NOW</h1>
     <p style="text-align:center; font-family: 'Classico'; font-weight: bold; color: #EDE9E5; font-size: 16px;">Make sure Wi-Fi and sound is on!</p>
@@ -155,94 +155,94 @@
     <div class="ar-slider-container">
         <!-- 1. Studio Model Card -->
         <div class="ar-slider-card">
-            <model-viewer
-                id="reveal" 
-                src="Models/S1_fin.glb" 
-                ar
-                ar-modes="webxr scene-viewer quick-look" 
-                ios-src="Models/S1_FIN.usdz"
-                ar-placement="floor"
-                ar-scale="auto"
-                camera-orbit="0deg 0deg 105%"
-                rotation="0 1.75 0" 
-                poster="images/S1 Poster.png"
-                autoplay
-                animation-name="*"
-                camera-controls
-                interaction-prompt="none">
-                <button slot="ar-button" style="display:none;"></button>
-            </model-viewer>
+           <model-viewer
+               id="reveal" 
+               src="Models/S1_fin.glb" 
+               ar
+               ar-modes="webxr scene-viewer quick-look" 
+               ios-src="Models/S1_FIN.usdz"
+               ar-placement="floor"
+               ar-scale="auto"
+               camera-orbit="0deg 0deg 105%"
+               rotation="0 1.75 0" 
+               poster="images/S1 Poster.png"
+               autoplay
+               animation-name="*"
+               camera-controls
+               interaction-prompt="none">
+               <button slot="ar-button" style="display:none;"></button>
+           </model-viewer>
             <div class="ar-card-title">Studio Tour</div>
             <button id="ar-button-studio" class="ar-launch-btn">
-                <span>View in AR</span>
+               <span>View in AR</span>
             </button>
         </div>
-
+ 
         <!-- 2. 1-Bedroom Model Card -->
         <div class="ar-slider-card">
-            <model-viewer
-                id="reveal-1bed" 
-                src="Models/A4_1bed.glb" 
-                ar
-                ar-modes="webxr scene-viewer quick-look" 
-                ios-src="Models/A4_1BED.usdz"
-                ar-placement="floor"
-                ar-scale="auto"
-                camera-orbit="0deg 0deg 105%"
-                rotation="0 1.75 0" 
-                poster="images/A4 Poster.png"
-                autoplay
-                animation-name="*"
-                camera-controls
-                interaction-prompt="none">
-                <button slot="ar-button" style="display:none;"></button>
-            </model-viewer>
+           <model-viewer
+               id="reveal-1bed" 
+               src="Models/A4_1bed.glb" 
+               ar
+               ar-modes="webxr scene-viewer quick-look" 
+               ios-src="Models/A4_1BED.usdz"
+               ar-placement="floor"
+               ar-scale="auto"
+               camera-orbit="0deg 0deg 105%"
+               rotation="0 1.75 0" 
+               poster="images/A4 Poster.png"
+               autoplay
+               animation-name="*"
+               camera-controls
+               interaction-prompt="none">
+               <button slot="ar-button" style="display:none;"></button>
+           </model-viewer>
             <div class="ar-card-title">1 Bedroom Tour</div>
             <button id="ar-button-1bed" class="ar-launch-btn">
-                <span>View in AR</span>
+               <span>View in AR</span>
             </button>
         </div>
-
+ 
         <!-- 3. Meet Finnley Model Card -->
         <div class="ar-slider-card">
-            <model-viewer
-                id="reveal-finnley" 
-                src="Models/Finnley_1.glb" 
-                ar
-                ar-modes="webxr scene-viewer quick-look" 
-                ios-src="Models/FINNLEY_1.usdz"
-                ar-placement="floor"
-                ar-scale="auto"
-                scale="0.4 0.4 0.4"
-                camera-orbit="0deg 75deg 105%" 
-                rotation="0 1.75 0" 
-                poster="images/Finnley Poster.png"
-                autoplay
-                animation-name="*"
-                camera-controls
-                interaction-prompt="none">
-                <button slot="ar-button" style="display:none;"></button>
-            </model-viewer>
+           <model-viewer
+               id="reveal-finnley" 
+               src="Models/Finnley_1.glb" 
+               ar
+               ar-modes="webxr scene-viewer quick-look" 
+               ios-src="Models/FINNLEY_1.usdz"
+               ar-placement="floor"
+               ar-scale="auto"
+               scale="0.4 0.4 0.4"
+               camera-orbit="0deg 75deg 105%" 
+               rotation="0 1.75 0" 
+               poster="images/Finnley Poster.png"
+               autoplay
+               animation-name="*"
+               camera-controls
+               interaction-prompt="none">
+               <button slot="ar-button" style="display:none;"></button>
+           </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
             <button id="ar-button-finnley" class="ar-launch-btn">
-                <span>View in AR</span>
+               <span>View in AR</span>
             </button>
         </div>
     </div>
  
     <div class="card" style="margin-top: 20px;">
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Select Your:</b><a href="https://alexanwestend.com/floor-plans/" target="_blank"> Floor Plan</a></p></h2>
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Explore:</b><a href="https://alexanwestend.com/floor-plans/map/" target="_blank"> Interactive Map</a></p></h2>
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Discover:</b><a href="https://alexanwestend.com/amenities/" target="_blank"> Resort Amenities</a></p></h2>
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Email:</b><a href="mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End"> Us</a></p></h2>
-        <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Call:</b><a href="tel:+15625219938" target="_blank"> 562-521-9938</a></p></h2>
+       <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Select Your:</b><a href="https://alexanwestend.com/floor-plans/" target="_blank"> Floor Plan</a></p></h2>
+       <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Explore:</b><a href="https://alexanwestend.com/floor-plans/map/" target="_blank"> Interactive Map</a></p></h2>
+       <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Discover:</b><a href="https://alexanwestend.com/amenities/" target="_blank"> Resort Amenities</a></p></h2>
+       <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Email:</b><a href="mailto:leasing@alexanwestend.com?Subject=Requesting VIP Tour Alexan West End"> Us</a></p></h2>
+       <h2><p style="font-family:'Classico'; color: #E69D6C; font-size: 25px;"><b>Call:</b><a href="tel:+15625219938" target="_blank"> 562-521-9938</a></p></h2>
         
         <h2 style="text-align: center;"><b style="color:#E69D6C;"><p style="font-family:Classico"> 600 West Broadway, Long Beach, CA. 90802</p></b></h2>
         <br>
         <!-- Coupon Button -->
         <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
             <button id="viewPrintCertificateButton" class="main-button">
-                <span style="font-size: 20px; color: #571B25; font-family: 'ChronicleDeck-Semibold';"><strong>Claim Your VIP Gift</strong></span>
+               <span style="font-size: 20px; color: #571B25; font-family: 'ChronicleDeck-Semibold';"><strong>Claim Your VIP Gift</strong></span>
             </button>
         </div>
     </div>
@@ -262,20 +262,20 @@
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
  
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+   document.addEventListener("DOMContentLoaded", function () {
         const video = document.getElementById('video-overlay');
         const playBtn = document.getElementById('play-pause-button');
         const allAudioElements = document.querySelectorAll('audio');
-
+ 
         // Master function to immediately pause, reset, and mute all audio tracks
         function stopAllAudio() {
-            allAudioElements.forEach(audio => {
+           allAudioElements.forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
                 audio.muted = true;
-            });
+           });
         }
-
+ 
         function toggleVideo() {
             if (video.paused) { 
                 stopAllAudio(); 
@@ -287,38 +287,38 @@
                 playBtn.style.display = "block"; 
             }
         }
-
+ 
         playBtn.addEventListener('click', toggleVideo);
         video.addEventListener('click', toggleVideo);
-
+ 
         // Instantly kill audio whenever any other link or non-AR button is clicked
         document.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('click', () => {
+           el.addEventListener('click', () => {
                 if (!['ar-button-studio', 'ar-button-1bed', 'ar-button-finnley', 'play-pause-button'].includes(el.id)) {
                     stopAllAudio();
                 }
-            });
+           });
         });
-
+ 
         // Kill audio instantly when returning to the browser tab or exiting native AR view
         window.addEventListener('focus', () => {
-            stopAllAudio();
+           stopAllAudio();
         });
-
+ 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 stopAllAudio();
             }
         });
-
+ 
         function openPdfInNewTab(blob, certificateNumber) {
-            stopAllAudio();
+           stopAllAudio();
             const url = URL.createObjectURL(blob);
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             if (isMobile) {
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `AlexanWestEndCertificate_${certificateNumber}.pdf`;
+               a.download = `AlexanWestEndCertificate_${certificateNumber}.pdf`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -327,9 +327,9 @@
                 if (!newWindow) alert('Please allow pop-ups to view the certificate.');
             }
         }
-
+ 
         document.getElementById('viewPrintCertificateButton').addEventListener('click', async () => {
-            stopAllAudio();
+           stopAllAudio();
             const { PDFDocument, rgb, StandardFonts } = PDFLib;
             try {
                 const bytes = await fetch('certificates/AWE_Certificate_fin.pdf').then(res => res.arrayBuffer());
@@ -344,56 +344,87 @@
                 const exp = new Date(); exp.setDate(now.getDate() + 121);
                 const expStr = exp.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 const certNo = Date.now().toString().slice(-8);
-
+ 
                 const x = 80; const baseY = height - 250;
-                page.drawText(`Certificate No: ${certNo}`, { x, y: baseY - 20, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
-                page.drawText(`Download Date: ${dateStr}`, { x, y: baseY - 40, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
-                page.drawText(`Valid until: ${expStr}`, { x, y: baseY - 60, size: 14, font: fontB, color: rgb(237/255, 233/255, 229/255) });
-
+               page.drawText(`Certificate No: ${certNo}`, { x, y: baseY - 20, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
+               page.drawText(`Download Date: ${dateStr}`, { x, y: baseY - 40, size: 12, font: fontR, color: rgb(87/255, 27/255, 37/255) });
+               page.drawText(`Valid until: ${expStr}`, { x, y: baseY - 60, size: 14, font: fontB, color: rgb(237/255, 233/255, 229/255) });
+ 
                 const pdfData = await pdfDoc.save();
-                openPdfInNewTab(new Blob([pdfData], { type: 'application/pdf' }), certNo);
+               openPdfInNewTab(new Blob([pdfData], { type: 'application/pdf' }), certNo);
             } catch (e) { 
-                console.error("PDF Generation error:", e);
-                alert("Error loading certificate template."); 
+               console.error("PDF Generation error:", e);
+               alert("Error loading certificate template."); 
             }
         });
-
-        // Clean, smooth AR launcher with precision sync for all buttons
+ 
+        // Standard AR launcher for Studio and 1-Bedroom
         function triggerAR(modelViewerId, audioId) {
-            stopAllAudio(); 
-
+           stopAllAudio(); 
+ 
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
+ 
+            if (isDesktop) {
+               alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
+               return;
+            }
+ 
+            if (audio) {
+               audio.currentTime = 0;
+               audio.loop = true;
+               setTimeout(() => {
+                    audio.muted = false;
+                    audio.play().catch(err => console.warn("Audio error:", err));
+                }, 500);
+            }
+ 
+            if (mv && mv.canActivateAR) {
+               mv.activateAR().catch(err => {
+                    console.warn("AR activation warning:", err);
+                    alert("AR is initializing or unavailable on this browser. Try opening in Chrome or Safari on mobile.");
+               });
+            } else {
+               alert("AR features require a supported mobile device with AR capabilities.");
+            }
+        }
+ 
+        // Tailored launcher for Finnley with optimized sync delay to align audio launch with AR plane detection
+        function triggerFinnleyAR() {
+            stopAllAudio();
+            const mv = document.getElementById('reveal-finnley');
+            const audio = document.getElementById('audio-finnley');
+            const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+ 
             if (isDesktop) {
                 alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
                 return;
             }
-
+ 
             if (audio) {
                 audio.currentTime = 0;
                 audio.loop = true;
                 setTimeout(() => {
                     audio.muted = false;
-                    audio.play().catch(err => console.warn("Audio error:", err));
-                }, 500);
+                    audio.play().catch(err => console.warn("Finnley audio error:", err));
+                }, 1200);
             }
-
+ 
             if (mv && mv.canActivateAR) {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
-                    alert("AR is initializing or unavailable on this browser. Try opening in Chrome or Safari on mobile.");
+                    alert("AR is initializing or unavailable on this browser.");
                 });
             } else {
                 alert("AR features require a supported mobile device with AR capabilities.");
             }
         }
-
+ 
         // Attach event listeners strictly to the custom AR launch buttons
-        document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
-        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
-        document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
+       document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
+       document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
+       document.getElementById('ar-button-finnley').addEventListener('click', () => triggerFinnleyAR());
     });
 </script>
 </body>
