@@ -148,7 +148,7 @@
     <p style="text-align:center; font-family: 'Classico'; font-weight: bold; color: #EDE9E5; font-size: 16px;">Make sure Wi-Fi and sound is on!</p>
  
     <div style="position: relative; width: 100%;">
-        <video id="video-overlay" style="width: 100%;" poster="images/Shirley_demo.png" playsinline muted>
+        <video id="video-overlay" style="width: 100%;" poster="images/MR-Demo_start screen.png" playsinline muted>
             <source src="Video/MR-Demo (1).mp4" type="video/mp4">
         </video>
         <button id="play-pause-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; padding: 10px 15px; background: #E69D6C; color: white; border:none; font-size: 30px; cursor:pointer;" aria-label="Play Video">  ▶  </button>
@@ -382,20 +382,27 @@
                audio.currentTime = 0;
                audio.loop = true;
                audio.muted = false;
-               audio.play().catch(err => console.warn("Audio playback restricted on iOS:", err));
-            }
- 
-            if (mv && mv.canActivateAR) {
-               mv.activateAR().catch(err => {
-                    console.warn("AR activation warning:", err);
-                    alert("AR is initializing or unavailable on this browser.");
+               // Ensure audio buffer is forced before launching native container on iOS
+               audio.play().then(() => {
+                   if (mv && mv.canActivateAR) {
+                       mv.activateAR().catch(err => {
+                           console.warn("AR activation warning:", err);
+                           alert("AR is initializing or unavailable on this browser.");
+                       });
+                   }
+               }).catch(err => {
+                   console.warn("Audio play restriction on iOS:", err);
+                   // Fallback: Launch AR even if audio policy blocks autoplay
+                   if (mv && mv.canActivateAR) {
+                       mv.activateAR();
+                   }
                });
-            } else {
-               alert("AR features require a supported mobile device with AR capabilities.");
+            } else if (mv && mv.canActivateAR) {
+               mv.activateAR();
             }
         }
  
-        // Foolproof Finnley Launcher with Safe Audio Promise & Native Quick Look Handoff
+        // Foolproof Finnley Launcher with Synchronized Promise Handling
         function triggerFinnleyAR() {
             stopAllAudio();
             const mv = document.getElementById('reveal-finnley');
@@ -411,16 +418,21 @@
                 audio.currentTime = 0;
                 audio.loop = true;
                 audio.muted = false;
-                audio.play().catch(err => console.warn("Finnley audio restriction on iOS:", err));
-            }
-
-            if (mv && mv.canActivateAR) {
-                mv.activateAR().catch(err => {
-                    console.warn("AR activation warning:", err);
-                    alert("AR is initializing or unavailable on this browser.");
+                audio.play().then(() => {
+                    if (mv && mv.canActivateAR) {
+                        mv.activateAR().catch(err => {
+                            console.warn("AR activation warning:", err);
+                            alert("AR is initializing or unavailable on this browser.");
+                        });
+                    }
+                }).catch(err => {
+                    console.warn("Finnley audio restriction on iOS:", err);
+                    if (mv && mv.canActivateAR) {
+                        mv.activateAR();
+                    }
                 });
-            } else {
-                alert("AR features require a supported mobile device with AR capabilities.");
+            } else if (mv && mv.canActivateAR) {
+                mv.activateAR();
             }
         }
  
