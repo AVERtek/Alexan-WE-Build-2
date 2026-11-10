@@ -151,6 +151,7 @@
         <button id="play-pause-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; padding: 10px 15px; background: #E69D6C; color: white; border:none; font-size: 30px; cursor:pointer;">  ▶  </button>
     </div>
     <br>
+    
     <!-- 3D Model Cards Container -->
     <div class="ar-slider-container">
         <!-- 1. Studio Model Card -->
@@ -357,6 +358,16 @@
                alert("Error loading certificate template."); 
             }
         });
+
+        // WebXR Time-Binding Sync (Active if WebXR session runs inside browser)
+        const finnleyMv = document.getElementById('reveal-finnley');
+        const finnleyAudio = document.getElementById('audio-finnley');
+
+        finnleyAudio.addEventListener('timeupdate', () => {
+            if (finnleyMv && !finnleyAudio.paused) {
+                finnleyMv.currentTime = finnleyAudio.currentTime;
+            }
+        });
  
         // Standard AR launcher for Studio and 1-Bedroom
         function triggerAR(modelViewerId, audioId) {
@@ -374,10 +385,8 @@
             if (audio) {
                audio.currentTime = 0;
                audio.loop = true;
-               setTimeout(() => {
-                    audio.muted = false;
-                    audio.play().catch(err => console.warn("Audio error:", err));
-                }, 300);
+               audio.muted = false;
+               audio.play().catch(err => console.warn("Audio error:", err));
             }
  
             if (mv && mv.canActivateAR) {
@@ -390,43 +399,39 @@
             }
         }
  
-        // -------------------------------------------------------------------------
-        // ROBUST FINNLEY AR LAUNCHER WITH EXPERIMENTAL DELAY OFFSET
-        // -------------------------------------------------------------------------
-        // Adjust AUDIO_DELAY_MS below to fine-tune sync on different mobile devices:
-        // Increase value if audio is lagging behind; decrease if animation is too fast.
-        const AUDIO_DELAY_MS = 2500; 
-
+        // Finnley Launcher with integrated Animation Delay & Audio Trigger
         function triggerFinnleyAR() {
             stopAllAudio();
-            const mv = document.getElementById('reveal-finnley');
-            const audio = document.getElementById('audio-finnley');
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
- 
             if (isDesktop) {
                 alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
                 return;
             }
  
-            // 1. Trigger the native AR viewer instantly so plane detection / hardware boot starts
-            if (mv && mv.canActivateAR) {
-                mv.activateAR().catch(err => {
+            // 1. Play audio immediately
+            if (finnleyAudio) {
+                finnleyAudio.currentTime = 0;
+                finnleyAudio.loop = true;
+                finnleyAudio.muted = false;
+                finnleyAudio.play().catch(err => console.warn("Audio error:", err));
+            }
+
+            // 2. Delay the animation playback (adjust milliseconds below to fine-tune sync offset)
+            if (finnleyMv) {
+                finnleyMv.pause();
+                setTimeout(() => {
+                    finnleyMv.play();
+                }, 2000); // <-- Adjust millisecond delay here if needed
+            }
+
+            // 3. Launch native AR viewer
+            if (finnleyMv && finnleyMv.canActivateAR) {
+                finnleyMv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
                     alert("AR is initializing or unavailable on this browser.");
                 });
             } else {
                 alert("AR features require a supported mobile device with AR capabilities.");
-                return;
-            }
- 
-            // 2. Play audio after the configurable delay offset to match the 3D model's start head
-            if (audio) {
-                audio.currentTime = 0;
-                audio.loop = true;
-                setTimeout(() => {
-                    audio.muted = false;
-                    audio.play().catch(err => console.warn("Finnley audio promise error:", err));
-                }, AUDIO_DELAY_MS);
             }
         }
  
