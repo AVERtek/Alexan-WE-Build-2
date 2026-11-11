@@ -178,7 +178,7 @@
            </model-viewer>
             <div class="ar-card-title">Studio Tour</div>
             <button id="ar-button-studio" class="ar-launch-btn" disabled>
-               <span class="btn-text">Loading...</span>
+               <span class="btn-text">Loading (0%)</span>
             </button>
         </div>
  
@@ -203,7 +203,7 @@
            </model-viewer>
             <div class="ar-card-title">1 Bedroom Tour</div>
             <button id="ar-button-1bed" class="ar-launch-btn" disabled>
-               <span class="btn-text">Loading...</span>
+               <span class="btn-text">Loading (0%)</span>
             </button>
         </div>
  
@@ -229,7 +229,7 @@
            </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
             <button id="ar-button-finnley" class="ar-launch-btn" disabled>
-               <span class="btn-text">Loading...</span>
+               <span class="btn-text">Loading (0%)</span>
             </button>
         </div>
     </div>
@@ -285,7 +285,6 @@
                 try {
                     await video.play();
                     
-                    // Request native full screen (browsers natively format video elements in landscape when requested from user gestures)
                     if (video.requestFullscreen) {
                         video.requestFullscreen().catch(() => {});
                     } else if (video.webkitEnterFullscreen) {
@@ -339,7 +338,7 @@
             }
         });
  
-        // Robust Loader Handlers with Explicit Text Span Updates
+        // Direct Progress Handler: Replaces "Optimizing..." with "View in AR" right at 100%
         document.querySelectorAll('model-viewer').forEach((mv) => {
             const card = mv.closest('.ar-slider-card');
             const btn = card.querySelector('.ar-launch-btn');
@@ -349,14 +348,17 @@
                 const percent = Math.round(e.detail.totalProgress * 100);
                 if (percent < 100) {
                     btnText.textContent = `Loading (${percent}%)`;
+                    btn.setAttribute('disabled', 'true');
                 } else {
-                    btnText.textContent = `Loading...`;
+                    btnText.textContent = 'View in AR';
+                    btn.removeAttribute('disabled');
                 }
             });
 
+            // Backup handler for cached assets
             mv.addEventListener('load', () => {
-                btn.removeAttribute('disabled');
                 btnText.textContent = 'View in AR';
+                btn.removeAttribute('disabled');
             });
         });
  
