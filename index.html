@@ -279,20 +279,27 @@
            });
         }
  
-        function toggleVideo() {
+        async function toggleVideo() {
             if (video.paused) { 
                 stopAllAudio(); 
-                video.play().then(() => {
-                    // Force Landscape Fullscreen Lock on Android/Mobile Browsers to Prevent Portrait Glitches
+                try {
+                    await video.play();
+                    
+                    // Force Landscape Orientation Lock immediately on play for Android/supported browsers
                     if (screen.orientation && typeof screen.orientation.lock === 'function') {
                         screen.orientation.lock('landscape').catch(() => {});
                     }
+
+                    // Request Fullscreen immediately after play start
                     if (video.requestFullscreen) {
                         video.requestFullscreen().catch(() => {});
                     } else if (video.webkitEnterFullscreen) {
                         video.webkitEnterFullscreen();
                     }
-                }).catch(err => console.warn("Video play error:", err)); 
+                } catch (err) {
+                    console.warn("Video play or fullscreen error:", err);
+                }
+
                 video.muted = false; 
                 playBtn.style.display = "none"; 
             } else { 
@@ -312,7 +319,7 @@
             }
         });
 
-        // Watch for unexpected fullscreen exits to restore UI state cleanly
+        // Watch for fullscreen exits to cleanly pause and reset play button state
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement && !video.paused) {
                 video.pause();
@@ -338,7 +345,7 @@
             }
         });
  
-        // Intuitive Loader Lifecycle Handlers (Clear Loading % -> Instant "View in AR")
+        // Intuitive Loader Handlers (Clear Loading % -> Instant "View in AR")
         document.querySelectorAll('model-viewer').forEach((mv) => {
             const card = mv.closest('.ar-slider-card');
             const btn = card.querySelector('.ar-launch-btn');
@@ -425,7 +432,7 @@
                 mv.currentTime = 0;
             }
 
-            // 2. Direct Safe Activation Call (Bypasses rigid canActivateAR checks during load phase)
+            // 2. Direct Safe Activation Call
             if (mv && typeof mv.activateAR === 'function') {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
