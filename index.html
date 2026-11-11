@@ -364,7 +364,7 @@
             }
         });
 
-        // Double-Duty Synchronized AR Trigger (Resets 3D timeline & audio simultaneously on click)
+        // Double-Duty Synchronized AR Trigger (Properly bound to all 3 tour cards)
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
@@ -404,9 +404,10 @@
             }
         }
  
+        // Fully bound event listeners for all three tour cards
         document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
-        document.getElementById('ar-button-1bed', () => triggerAR('reveal-1bed', 'audio-1bed'));
-        document.getElementById('ar-button-finnley', () => triggerAR('reveal-finnley', 'audio-finnley'));
+        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
+        document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
     });
 </script>
 </body>
