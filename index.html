@@ -123,6 +123,12 @@
             box-sizing: border-box;
             margin-top: auto;
         }
+        .ar-launch-btn:disabled {
+            background-color: #7a5548;
+            color: #d1b8af;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -171,8 +177,8 @@
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">Studio Tour</div>
-            <button id="ar-button-studio" class="ar-launch-btn">
-               <span>View in AR</span>
+            <button id="ar-button-studio" class="ar-launch-btn" disabled>
+               <span class="btn-text">Preparing...</span>
             </button>
         </div>
  
@@ -196,8 +202,8 @@
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">1 Bedroom Tour</div>
-            <button id="ar-button-1bed" class="ar-launch-btn">
-               <span>View in AR</span>
+            <button id="ar-button-1bed" class="ar-launch-btn" disabled>
+               <span class="btn-text">Preparing...</span>
             </button>
         </div>
  
@@ -222,8 +228,8 @@
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
-            <button id="ar-button-finnley" class="ar-launch-btn">
-               <span>View in AR</span>
+            <button id="ar-button-finnley" class="ar-launch-btn" disabled>
+               <span class="btn-text">Preparing...</span>
             </button>
         </div>
     </div>
@@ -317,6 +323,27 @@
             }
         });
  
+        // GPU-Ready Loader Lifecycle Handlers for Network & Shader Compilation
+        document.querySelectorAll('model-viewer').forEach((mv) => {
+            const card = mv.closest('.ar-slider-card');
+            const btn = card.querySelector('.ar-launch-btn');
+            const btnText = btn.querySelector('.btn-text');
+
+            mv.addEventListener('progress', (e) => {
+                const percent = Math.round(e.detail.totalProgress * 100);
+                if (percent < 100) {
+                    btnText.textContent = `Loading (${percent}%)`;
+                } else {
+                    btnText.textContent = `Optimizing...`;
+                }
+            });
+
+            mv.addEventListener('load', () => {
+                btn.removeAttribute('disabled');
+                btnText.textContent = 'View in AR';
+            });
+        });
+ 
         function openPdfInNewTab(blob, certificateNumber) {
            stopAllAudio();
             const url = URL.createObjectURL(blob);
@@ -364,7 +391,7 @@
             }
         });
 
-        // Robust Safe AR Trigger with Crash Guard for Third-Party iOS Browsers (Edge/Chrome)
+        // Robust Safe AR Trigger with Crash Guard & Direct Unblocked Intent Handoff
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
@@ -383,14 +410,14 @@
                 mv.currentTime = 0;
             }
 
-            // 2. Safe AR Activation with Exception Catching (Prevents Edge/Chrome iOS crash loops)
-            if (mv && mv.canActivateAR) {
+            // 2. Direct Safe Activation Call (Bypasses rigid canActivateAR checks during load phase)
+            if (mv && typeof mv.activateAR === 'function') {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
                     if (isIOS) {
                         alert("To view in AR on iOS, please open this page in Safari (third-party browsers like Edge/Chrome do not support native AR Quick Look).");
                     } else {
-                        alert("AR is initializing or unavailable on this browser.");
+                        alert("AR is initializing. Please wait a moment and try again.");
                     }
                 });
             } else {
@@ -412,10 +439,10 @@
             }
         }
  
-        // Fully bound event listeners for all three tour cards
+        // Fully bound event listeners for all three tour cards (Fixed syntax bug on 1-bed)
         document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
-        document.getElementById('ar-button-1bed', () => triggerAR('reveal-1bed', 'audio-1bed'));
-        document.getElementById('ar-button-finnley', () => triggerAR('reveal-finnley', 'audio-finnley'));
+        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
+        document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
     });
 </script>
 </body>
