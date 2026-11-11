@@ -164,7 +164,7 @@
                camera-orbit="0deg 0deg 105%"
                rotation="0 1.75 0" 
                poster="images/S1 Poster.png"
-               loading="lazy"
+               loading="eager"
                autoplay
                camera-controls
                interaction-prompt="none">
@@ -189,7 +189,7 @@
                camera-orbit="0deg 0deg 105%"
                rotation="0 1.75 0" 
                poster="images/A4 Poster.png"
-               loading="lazy"
+               loading="eager"
                autoplay
                camera-controls
                interaction-prompt="none">
@@ -215,7 +215,7 @@
                camera-orbit="0deg 75deg 105%" 
                rotation="0 1.75 0" 
                poster="images/Finnley Poster.png"
-               loading="lazy"
+               loading="eager"
                autoplay
                camera-controls
                interaction-prompt="none">
@@ -364,7 +364,7 @@
             }
         });
 
-        // Double-Duty Synchronized AR Trigger (Properly bound to all 3 tour cards)
+        // Robust Safe AR Trigger with Crash Guard for Third-Party iOS Browsers (Edge/Chrome)
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
@@ -383,14 +383,22 @@
                 mv.currentTime = 0;
             }
 
-            // 2. Immediately trigger native AR viewer synchronously for Android/iOS gesture validation
+            // 2. Safe AR Activation with Exception Catching (Prevents Edge/Chrome iOS crash loops)
             if (mv && mv.canActivateAR) {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
-                    alert("AR is initializing or unavailable on this browser.");
+                    if (isIOS) {
+                        alert("To view in AR on iOS, please open this page in Safari (third-party browsers like Edge/Chrome do not support native AR Quick Look).");
+                    } else {
+                        alert("AR is initializing or unavailable on this browser.");
+                    }
                 });
             } else {
-                alert("AR features require a supported mobile device with AR capabilities.");
+                if (isIOS) {
+                    alert("AR Quick Look requires Safari on iOS.");
+                } else {
+                    alert("AR features require a supported mobile device with AR capabilities.");
+                }
             }
 
             // 3. Audio routing: Skip web audio for embedded iOS 1-Bed, play normally for Android & others (locked to t=0)
@@ -406,8 +414,8 @@
  
         // Fully bound event listeners for all three tour cards
         document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
-        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
-        document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
+        document.getElementById('ar-button-1bed', () => triggerAR('reveal-1bed', 'audio-1bed'));
+        document.getElementById('ar-button-finnley', () => triggerAR('reveal-finnley', 'audio-finnley'));
     });
 </script>
 </body>
