@@ -285,19 +285,14 @@
                 try {
                     await video.play();
                     
-                    // Force Landscape Orientation Lock immediately on play for Android/supported browsers
-                    if (screen.orientation && typeof screen.orientation.lock === 'function') {
-                        screen.orientation.lock('landscape').catch(() => {});
-                    }
-
-                    // Request Fullscreen immediately after play start
+                    // Request native full screen (browsers natively format video elements in landscape when requested from user gestures)
                     if (video.requestFullscreen) {
                         video.requestFullscreen().catch(() => {});
                     } else if (video.webkitEnterFullscreen) {
                         video.webkitEnterFullscreen();
                     }
                 } catch (err) {
-                    console.warn("Video play or fullscreen error:", err);
+                    console.warn("Video play error:", err);
                 }
 
                 video.muted = false; 
@@ -319,7 +314,6 @@
             }
         });
 
-        // Watch for fullscreen exits to cleanly pause and reset play button state
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement && !video.paused) {
                 video.pause();
@@ -345,7 +339,7 @@
             }
         });
  
-        // Intuitive Loader Handlers (Clear Loading % -> Instant "View in AR")
+        // Robust Loader Handlers with Explicit Text Span Updates
         document.querySelectorAll('model-viewer').forEach((mv) => {
             const card = mv.closest('.ar-slider-card');
             const btn = card.querySelector('.ar-launch-btn');
