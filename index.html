@@ -178,7 +178,7 @@
            </model-viewer>
             <div class="ar-card-title">Studio Tour</div>
             <button id="ar-button-studio" class="ar-launch-btn" disabled>
-               <span class="btn-text">Preparing...</span>
+               <span class="btn-text">Loading...</span>
             </button>
         </div>
  
@@ -203,7 +203,7 @@
            </model-viewer>
             <div class="ar-card-title">1 Bedroom Tour</div>
             <button id="ar-button-1bed" class="ar-launch-btn" disabled>
-               <span class="btn-text">Preparing...</span>
+               <span class="btn-text">Loading...</span>
             </button>
         </div>
  
@@ -229,7 +229,7 @@
            </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
             <button id="ar-button-finnley" class="ar-launch-btn" disabled>
-               <span class="btn-text">Preparing...</span>
+               <span class="btn-text">Loading...</span>
             </button>
         </div>
     </div>
@@ -283,6 +283,10 @@
             if (video.paused) { 
                 stopAllAudio(); 
                 video.play().then(() => {
+                    // Force Landscape Fullscreen Lock on Android/Mobile Browsers to Prevent Portrait Glitches
+                    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+                        screen.orientation.lock('landscape').catch(() => {});
+                    }
                     if (video.requestFullscreen) {
                         video.requestFullscreen().catch(() => {});
                     } else if (video.webkitEnterFullscreen) {
@@ -303,6 +307,17 @@
         video.addEventListener('ended', () => {
             video.currentTime = 0;
             playBtn.style.display = "block";
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+        });
+
+        // Watch for unexpected fullscreen exits to restore UI state cleanly
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && !video.paused) {
+                video.pause();
+                playBtn.style.display = "block";
+            }
         });
  
         document.querySelectorAll('a, button').forEach(el => {
@@ -323,7 +338,7 @@
             }
         });
  
-        // GPU-Ready Loader Lifecycle Handlers for Network & Shader Compilation
+        // Intuitive Loader Lifecycle Handlers (Clear Loading % -> Instant "View in AR")
         document.querySelectorAll('model-viewer').forEach((mv) => {
             const card = mv.closest('.ar-slider-card');
             const btn = card.querySelector('.ar-launch-btn');
@@ -334,7 +349,7 @@
                 if (percent < 100) {
                     btnText.textContent = `Loading (${percent}%)`;
                 } else {
-                    btnText.textContent = `Optimizing...`;
+                    btnText.textContent = `Loading...`;
                 }
             });
 
@@ -439,7 +454,7 @@
             }
         }
  
-        // Fully bound event listeners for all three tour cards (Fixed syntax bug on 1-bed)
+        // Fully bound event listeners for all three tour cards
         document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
         document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
         document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
