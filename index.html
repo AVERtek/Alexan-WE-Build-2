@@ -364,7 +364,7 @@
             }
         });
 
-        // Stable Cross-Platform AR Trigger
+        // Double-Duty Synchronized AR Trigger (Resets 3D timeline & audio simultaneously on click)
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
@@ -378,7 +378,12 @@
                return;
             }
  
-            // 1. Immediately trigger native AR viewer synchronously
+            // 1. Double-Duty Sync: Reset 3D animation timeline to frame zero instantly
+            if (mv) {
+                mv.currentTime = 0;
+            }
+
+            // 2. Immediately trigger native AR viewer synchronously for Android/iOS gesture validation
             if (mv && mv.canActivateAR) {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
@@ -388,7 +393,7 @@
                 alert("AR features require a supported mobile device with AR capabilities.");
             }
 
-            // 2. Audio routing: Skip web audio for embedded iOS 1-Bed, play normally for Android & others
+            // 3. Audio routing: Skip web audio for embedded iOS 1-Bed, play normally for Android & others (locked to t=0)
             const isEmbeddedIOSOneBed = (isIOS && modelViewerId === 'reveal-1bed');
             
             if (!isEmbeddedIOSOneBed && audio) {
@@ -400,8 +405,8 @@
         }
  
         document.getElementById('ar-button-studio').addEventListener('click', () => triggerAR('reveal', 'audio-studio'));
-        document.getElementById('ar-button-1bed').addEventListener('click', () => triggerAR('reveal-1bed', 'audio-1bed'));
-        document.getElementById('ar-button-finnley').addEventListener('click', () => triggerAR('reveal-finnley', 'audio-finnley'));
+        document.getElementById('ar-button-1bed', () => triggerAR('reveal-1bed', 'audio-1bed'));
+        document.getElementById('ar-button-finnley', () => triggerAR('reveal-finnley', 'audio-finnley'));
     });
 </script>
 </body>
