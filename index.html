@@ -123,6 +123,12 @@
             box-sizing: border-box;
             margin-top: auto;
         }
+        .ar-launch-btn:disabled {
+            background-color: #7a5548;
+            color: #d1b8af;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -164,15 +170,15 @@
                camera-orbit="0deg 0deg 105%"
                rotation="0 1.75 0" 
                poster="images/S1 Poster.png"
-               loading="lazy"
+               loading="eager"
                autoplay
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">Studio Tour</div>
-            <button id="ar-button-studio" class="ar-launch-btn">
-               <span>View in AR</span>
+            <button id="ar-button-studio" class="ar-launch-btn" disabled>
+               <span class="btn-text">Loading (0%)</span>
             </button>
         </div>
  
@@ -189,15 +195,15 @@
                camera-orbit="0deg 0deg 105%"
                rotation="0 1.75 0" 
                poster="images/A4 Poster.png"
-               loading="lazy"
+               loading="eager"
                autoplay
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">1 Bedroom Tour</div>
-            <button id="ar-button-1bed" class="ar-launch-btn">
-               <span>View in AR</span>
+            <button id="ar-button-1bed" class="ar-launch-btn" disabled>
+               <span class="btn-text">Loading (0%)</span>
             </button>
         </div>
  
@@ -205,25 +211,25 @@
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-finnley" 
-               src="Models/Finnly_Dog_Full_Scene.glb" 
+               src="Models/Finnly_Dog_Optimized.glb" 
                ar
                ar-modes="webxr scene-viewer quick-look" 
-               ios-src="Models/Finnly_Dog_Full_Scene.usdz"
+               ios-src="Models/Finnly Dog Compressed.usdz"
                ar-placement="floor"
                ar-scale="auto"
                scale="0.4 0.4 0.4"
                camera-orbit="0deg 75deg 105%" 
                rotation="0 1.75 0" 
                poster="images/Finnley Poster.png"
-               loading="lazy"
+               loading="eager"
                autoplay
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
-            <button id="ar-button-finnley" class="ar-launch-btn">
-               <span>View in AR</span>
+            <button id="ar-button-finnley" class="ar-launch-btn" disabled>
+               <span class="btn-text">Loading (0%)</span>
             </button>
         </div>
     </div>
@@ -273,16 +279,21 @@
            });
         }
  
-        function toggleVideo() {
+        async function toggleVideo() {
             if (video.paused) { 
                 stopAllAudio(); 
-                video.play().then(() => {
+                try {
+                    await video.play();
+                    
                     if (video.requestFullscreen) {
                         video.requestFullscreen().catch(() => {});
                     } else if (video.webkitEnterFullscreen) {
                         video.webkitEnterFullscreen();
                     }
-                }).catch(err => console.warn("Video play error:", err)); 
+                } catch (err) {
+                    console.warn("Video play error:", err);
+                }
+
                 video.muted = false; 
                 playBtn.style.display = "none"; 
             } else { 
@@ -297,6 +308,16 @@
         video.addEventListener('ended', () => {
             video.currentTime = 0;
             playBtn.style.display = "block";
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && !video.paused) {
+                video.pause();
+                playBtn.style.display = "block";
+            }
         });
  
         document.querySelectorAll('a, button').forEach(el => {
@@ -315,6 +336,30 @@
             if (document.hidden) {
                 stopAllAudio();
             }
+        });
+ 
+        // Direct Progress Handler: Replaces "Optimizing..." with "View in AR" right at 100%
+        document.querySelectorAll('model-viewer').forEach((mv) => {
+            const card = mv.closest('.ar-slider-card');
+            const btn = card.querySelector('.ar-launch-btn');
+            const btnText = btn.querySelector('.btn-text');
+
+            mv.addEventListener('progress', (e) => {
+                const percent = Math.round(e.detail.totalProgress * 100);
+                if (percent < 100) {
+                    btnText.textContent = `Loading (${percent}%)`;
+                    btn.setAttribute('disabled', 'true');
+                } else {
+                    btnText.textContent = 'View in AR';
+                    btn.removeAttribute('disabled');
+                }
+            });
+
+            // Backup handler for cached assets
+            mv.addEventListener('load', () => {
+                btnText.textContent = 'View in AR';
+                btn.removeAttribute('disabled');
+            });
         });
  
         function openPdfInNewTab(blob, certificateNumber) {
@@ -364,7 +409,7 @@
             }
         });
 
-        // Double-Duty Synchronized AR Trigger (Properly bound to all 3 tour cards)
+        // Robust Safe AR Trigger with Crash Guard & Direct Unblocked Intent Handoff
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
@@ -383,14 +428,22 @@
                 mv.currentTime = 0;
             }
 
-            // 2. Immediately trigger native AR viewer synchronously for Android/iOS gesture validation
-            if (mv && mv.canActivateAR) {
+            // 2. Direct Safe Activation Call
+            if (mv && typeof mv.activateAR === 'function') {
                 mv.activateAR().catch(err => {
                     console.warn("AR activation warning:", err);
-                    alert("AR is initializing or unavailable on this browser.");
+                    if (isIOS) {
+                        alert("To view in AR on iOS, please open this page in Safari (third-party browsers like Edge/Chrome do not support native AR Quick Look).");
+                    } else {
+                        alert("AR is initializing. Please wait a moment and try again.");
+                    }
                 });
             } else {
-                alert("AR features require a supported mobile device with AR capabilities.");
+                if (isIOS) {
+                    alert("AR Quick Look requires Safari on iOS.");
+                } else {
+                    alert("AR features require a supported mobile device with AR capabilities.");
+                }
             }
 
             // 3. Audio routing: Skip web audio for embedded iOS 1-Bed, play normally for Android & others (locked to t=0)
