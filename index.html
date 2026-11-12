@@ -207,14 +207,14 @@
             </button>
         </div>
  
-        <!-- 3. Meet Finnley Model Card -->
+        <!-- 3. Meet Finnley Model Card (Corrected iOS USDZ path) -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-finnley" 
                src="Models/Finnly_Dog_Optimized.glb" 
                ar
                ar-modes="webxr scene-viewer quick-look" 
-               ios-src="Models/Finnly_Dog_Optimized_v2.usdz"
+               ios-src="Models/Finnly_Dog_Optimized_v2 .usdz"
                ar-placement="floor"
                ar-scale="auto"
                scale="0.4 0.4 0.4"
@@ -338,7 +338,7 @@
             }
         });
  
-        // Direct Progress Handler: Replaces "Optimizing..." with "View in AR" right at 100%
+        // Direct Progress Handler: Updates loading state cleanly and switches to "View in AR" at 100%
         document.querySelectorAll('model-viewer').forEach((mv) => {
             const card = mv.closest('.ar-slider-card');
             const btn = card.querySelector('.ar-launch-btn');
