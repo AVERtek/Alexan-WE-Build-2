@@ -157,7 +157,7 @@
     
     <!-- 3D Model Cards Container -->
     <div class="ar-slider-container">
-        <!-- 1. Studio Model Card -->
+        <!-- 1. Studio Model Card (S1) -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal" 
@@ -182,7 +182,7 @@
             </button>
         </div>
  
-        <!-- 2. 1-Bedroom Model Card (Using USDZ with Embedded Audio for iOS Test) -->
+        <!-- 2. 1-Bedroom Model Card (A4) -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-1bed" 
@@ -207,7 +207,7 @@
             </button>
         </div>
  
-        <!-- 3. Meet Finnley Model Card (Corrected iOS USDZ path) -->
+        <!-- 3. Meet Finnley Model Card -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-finnley" 
@@ -409,7 +409,7 @@
             }
         });
 
-        // Robust Safe AR Trigger with Crash Guard & Direct Unblocked Intent Handoff
+        // Robust Safe AR Trigger with Crash Guard, Intent Handoff, and Embedded Audio Bypassing for iOS USDZs
         function triggerAR(modelViewerId, audioId) {
             stopAllAudio(); 
  
@@ -446,10 +446,11 @@
                 }
             }
 
-            // 3. Audio routing: Skip web audio for embedded iOS 1-Bed, play normally for Android & others (locked to t=0)
-            const isEmbeddedIOSOneBed = (isIOS && modelViewerId === 'reveal-1bed');
+            // 3. Audio Bypassing Logic: 
+            // Skips external web audio on iOS models that have native embedded USDZ spatial soundtracks (A4 & Finnley)
+            const hasEmbeddedUSDZAudio = isIOS && (modelViewerId === 'reveal-1bed' || modelViewerId === 'reveal-finnley');
             
-            if (!isEmbeddedIOSOneBed && audio) {
+            if (!hasEmbeddedUSDZAudio && audio) {
                 audio.currentTime = 0;
                 audio.loop = true;
                 audio.muted = false;
