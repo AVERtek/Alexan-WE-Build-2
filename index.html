@@ -265,7 +265,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 </div>
  
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.js"></script>
+<!-- Pinned minified production build for lower memory footprint -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
  
 <script>
@@ -273,12 +274,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         const video = document.getElementById('video-overlay');
         const playBtn = document.getElementById('play-pause-button');
         const allAudioElements = document.querySelectorAll('audio');
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
  
         function stopAllAudio() {
            allAudioElements.forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
            });
+        }
+
+        // iOS Memory Shield: Prevent Safari from spinning up 3 heavy WebGL GLB contexts on page load.
+        // Shows crisp poster images with zero GPU RAM overhead and launches native USDZ Quick Look immediately.
+        if (isIOS) {
+            allAudioElements.forEach(audio => {
+                audio.removeAttribute('src');
+                audio.load();
+            });
+            document.querySelectorAll('model-viewer').forEach((mv) => {
+                mv.setAttribute('reveal', 'interaction');
+                const card = mv.closest('.ar-slider-card');
+                const btn = card.querySelector('.ar-launch-btn');
+                const btnText = btn.querySelector('.btn-text');
+                btnText.textContent = 'View in AR';
+                btn.removeAttribute('disabled');
+            });
         }
  
         async function toggleVideo() {
@@ -340,33 +359,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         });
  
-        // Throttled Progress Handler to stop mobile Safari main thread freezing
-        document.querySelectorAll('model-viewer').forEach((mv) => {
-            const card = mv.closest('.ar-slider-card');
-            const btn = card.querySelector('.ar-launch-btn');
-            const btnText = btn.querySelector('.btn-text');
-            let lastPercent = -1;
+        // Throttled Progress Handler (Runs for Android/Desktop 3D previews)
+        if (!isIOS) {
+            document.querySelectorAll('model-viewer').forEach((mv) => {
+                const card = mv.closest('.ar-slider-card');
+                const btn = card.querySelector('.ar-launch-btn');
+                const btnText = btn.querySelector('.btn-text');
+                let lastPercent = -1;
 
-            mv.addEventListener('progress', (e) => {
-                const percent = Math.round(e.detail.totalProgress * 100);
-                if (percent !== lastPercent) {
-                    lastPercent = percent;
-                    if (percent < 100) {
-                        btnText.textContent = `Loading (${percent}%)`;
-                        btn.setAttribute('disabled', 'true');
-                    } else {
-                        btnText.textContent = 'View in AR';
-                        btn.removeAttribute('disabled');
+                mv.addEventListener('progress', (e) => {
+                    const percent = Math.round(e.detail.totalProgress * 100);
+                    if (percent !== lastPercent) {
+                        lastPercent = percent;
+                        if (percent < 100) {
+                            btnText.textContent = `Loading (${percent}%)`;
+                            btn.setAttribute('disabled', 'true');
+                        } else {
+                            btnText.textContent = 'View in AR';
+                            btn.removeAttribute('disabled');
+                        }
                     }
-                }
-            });
+                });
 
-            // Backup handler for cached assets
-            mv.addEventListener('load', () => {
-                btnText.textContent = 'View in AR';
-                btn.removeAttribute('disabled');
+                // Backup handler for cached assets
+                mv.addEventListener('load', () => {
+                    btnText.textContent = 'View in AR';
+                    btn.removeAttribute('disabled');
+                });
             });
-        });
+        }
  
         function openPdfInNewTab(blob, certificateNumber) {
            stopAllAudio();
@@ -422,7 +443,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const mv = document.getElementById(modelViewerId);
             const audio = document.getElementById(audioId);
             const isDesktop = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
  
             if (isDesktop) {
                alert("AR experiences require a mobile phone or tablet (iOS/Android). Open this link on your mobile device to view models in your space!");
@@ -456,7 +476,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             // 3. Audio Bypassing Logic: 
-            // All three iOS USDZ files (S1, A4, Finnley) now include embedded audio
+            // All three iOS USDZ files (S1, A4, Finnley) include embedded audio
             const hasEmbeddedUSDZAudio = isIOS && (
                 modelViewerId === 'reveal' || 
                 modelViewerId === 'reveal-1bed' || 
