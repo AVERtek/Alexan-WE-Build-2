@@ -33,9 +33,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 -->  
 <!--=========================================================-->
     <style>
-        .ar-launch-btn span, .main-button span {
-    pointer-events: none;
-}
+    .ar-launch-btn span, .main-button span {
+        pointer-events: none;
+    }
         /* Global & Button Styles */
         html, body { margin: 0; padding: 0; overflow-x: hidden; font-family: Google Sans, Noto, Roboto, Helvetica Neue, sans-serif; color: #ede9e5; background-color: #571b25; }
         .container { max-width: 600px; width: 100%; box-sizing: border-box; padding: 0 10px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
@@ -137,9 +137,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <body>
  
 <!-- Dedicated Audio Assets for Each UX -->
-<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="auto" loop></audio>
-<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="auto" loop></audio>
-<audio id="audio-finnley" src="Sound/Finnley Demo Video_audio_fin3.mp3" preload="auto" loop></audio>
+<audio id="audio-studio" src="Sound/AR Audio Mix_S1_final.mp3" preload="none" loop></audio>
+<audio id="audio-1bed" src="Sound/AR Audio Mix_A4_Ava v2 final.mp3" preload="none" loop></audio>
+<audio id="audio-finnley" src="Sound/Finnley Demo Video_audio_fin3.mp3" preload="none" loop></audio>
  
 <div class="container">
     <div class="card">
@@ -174,7 +174,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                rotation="0 1.75 0" 
                poster="images/S1 Poster.png"
                loading="eager"
-               autoplay
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
@@ -198,8 +197,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                camera-orbit="0deg 0deg 105%"
                rotation="0 1.75 0" 
                poster="images/A4 Poster.png"
-               loading="eager"
-               autoplay
+               loading="lazy"
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
@@ -220,12 +218,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                ios-src="Models/Finnly(reduce)_with_audio.usdz"
                ar-placement="floor"
                ar-scale="auto"
-               scale="0.3 0.3 0.3"
+               scale="0.4 0.4 0.4"
                camera-orbit="0deg 75deg 105%" 
                rotation="0 1.75 0" 
                poster="images/Finnley Poster.png"
-               loading="eager"
-               autoplay
+               loading="lazy"
                camera-controls
                interaction-prompt="none">
                <button slot="ar-button" style="display:none;"></button>
@@ -278,7 +275,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
            allAudioElements.forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
-                audio.muted = true;
            });
         }
  
@@ -341,20 +337,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         });
  
-        // Direct Progress Handler: Updates loading state cleanly and switches to "View in AR" at 100%
+        // Throttled Progress Handler to stop mobile Safari main thread freezing
         document.querySelectorAll('model-viewer').forEach((mv) => {
             const card = mv.closest('.ar-slider-card');
             const btn = card.querySelector('.ar-launch-btn');
             const btnText = btn.querySelector('.btn-text');
+            let lastPercent = -1;
 
             mv.addEventListener('progress', (e) => {
                 const percent = Math.round(e.detail.totalProgress * 100);
-                if (percent < 100) {
-                    btnText.textContent = `Loading (${percent}%)`;
-                    btn.setAttribute('disabled', 'true');
-                } else {
-                    btnText.textContent = 'View in AR';
-                    btn.removeAttribute('disabled');
+                if (percent !== lastPercent) {
+                    lastPercent = percent;
+                    if (percent < 100) {
+                        btnText.textContent = `Loading (${percent}%)`;
+                        btn.setAttribute('disabled', 'true');
+                    } else {
+                        btnText.textContent = 'View in AR';
+                        btn.removeAttribute('disabled');
+                    }
                 }
             });
 
