@@ -166,12 +166,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     
     <!-- 3D Model Cards Container -->
     <div class="ar-slider-container">
-        <!-- 1. Studio Model Card (S1) - Loaded First -->
+        <!-- 1. Studio Model Card (S1) -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal" 
-               src="" 
-               data-src="Models/S1_fin2.glb"
+               src="Models/S1_fin2.glb" 
                ar
                ar-modes="webxr scene-viewer quick-look" 
                ios-src="Models/S1_FIN4_with_audio.usdz"
@@ -187,17 +186,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">Studio Tour</div>
-            <button id="ar-button-studio" class="ar-launch-btn" disabled>
-               <span class="btn-text">Loading (0%)</span>
+            <button id="ar-button-studio" class="ar-launch-btn">
+               <span class="btn-text">View in AR</span>
             </button>
         </div>
  
-        <!-- 2. 1-Bedroom Model Card (A4) - Queued Second -->
+        <!-- 2. 1-Bedroom Model Card (A4) -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-1bed" 
-               src="" 
-               data-src="Models/A4_1bed.glb"
+               src="Models/A4_1bed.glb" 
                ar
                ar-modes="webxr scene-viewer quick-look" 
                ios-src="Models/A4_1BED_FIN3.usdz"
@@ -213,17 +211,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">1 Bedroom Tour</div>
-            <button id="ar-button-1bed" class="ar-launch-btn" disabled>
-               <span class="btn-text">Queued...</span>
+            <button id="ar-button-1bed" class="ar-launch-btn">
+               <span class="btn-text">View in AR</span>
             </button>
         </div>
  
-        <!-- 3. Meet Finnley Model Card - Queued Third (Scale 0.375) -->
+        <!-- 3. Meet Finnley Model Card (Scale 0.375) -->
         <div class="ar-slider-card">
            <model-viewer
                id="reveal-finnley" 
-               src="" 
-               data-src="Models/Finnly_Dog_Optimized.glb"
+               src="Models/Finnly_Dog_Optimized.glb" 
                ar
                ar-modes="webxr scene-viewer quick-look" 
                ios-src="Models/Finnly(reduce)_with_audio.usdz"
@@ -240,8 +237,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                <button slot="ar-button" style="display:none;"></button>
            </model-viewer>
             <div class="ar-card-title">Meet Finnley</div>
-            <button id="ar-button-finnley" class="ar-launch-btn" disabled>
-               <span class="btn-text">Queued...</span>
+            <button id="ar-button-finnley" class="ar-launch-btn">
+               <span class="btn-text">View in AR</span>
             </button>
         </div>
     </div>
@@ -315,13 +312,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 try {
                     await video.play();
                     
+                    // Android & iOS Landscape Fullscreen Request with Screen Orientation Lock API
                     if (video.requestFullscreen) {
-                        video.requestFullscreen().catch(() => {});
+                        await video.requestFullscreen();
+                        if (screen.orientation && screen.orientation.lock) {
+                            screen.orientation.lock('landscape').catch(() => {});
+                        }
                     } else if (video.webkitEnterFullscreen) {
                         video.webkitEnterFullscreen();
                     }
                 } catch (err) {
-                    console.warn("Video play error:", err);
+                    console.warn("Video play/fullscreen error:", err);
                 }
 
                 video.muted = false; 
@@ -341,12 +342,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             if (document.fullscreenElement && document.exitFullscreen) {
                 document.exitFullscreen().catch(() => {});
             }
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
         });
 
         document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement && !video.paused) {
-                video.pause();
+            if (!document.fullscreenElement) {
+                if (!video.paused) {
+                    video.pause();
+                }
                 playBtn.style.display = "block";
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
             }
         });
  
@@ -368,30 +377,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         });
  
-        // SEQUENTIAL MODEL QUEUE LOADER (Android & Desktop Only)
-        // Loads model-viewer GLB assets one at a time to prevent concurrent GPU VRAM spikes
+        // Throttled Progress Handler (Runs for Android/Desktop 3D previews)
         if (!isIOS) {
-            const modelViewers = Array.from(document.querySelectorAll('model-viewer'));
-            
-            function loadModelSequentially(index) {
-                if (index >= modelViewers.length) return;
-                
-                const mv = modelViewers[index];
-                const dataSrc = mv.getAttribute('data-src');
+            document.querySelectorAll('model-viewer').forEach((mv) => {
                 const card = mv.closest('.ar-slider-card');
                 const btn = card.querySelector('.ar-launch-btn');
                 const btnText = btn.querySelector('.btn-text');
-                
-                btnText.textContent = 'Loading (0%)';
-                mv.setAttribute('src', dataSrc);
-
                 let lastPercent = -1;
+
                 mv.addEventListener('progress', (e) => {
                     const percent = Math.round(e.detail.totalProgress * 100);
                     if (percent !== lastPercent) {
                         lastPercent = percent;
                         if (percent < 100) {
                             btnText.textContent = `Loading (${percent}%)`;
+                            btn.setAttribute('disabled', 'true');
                         } else {
                             btnText.textContent = 'View in AR';
                             btn.removeAttribute('disabled');
@@ -399,22 +399,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     }
                 });
 
+                // Backup handler for cached assets
                 mv.addEventListener('load', () => {
                     btnText.textContent = 'View in AR';
                     btn.removeAttribute('disabled');
-                    // Once current model is fully loaded, trigger the next model in sequence
-                    loadModelSequentially(index + 1);
                 });
-
-                mv.addEventListener('error', () => {
-                    btnText.textContent = 'View in AR';
-                    btn.removeAttribute('disabled');
-                    loadModelSequentially(index + 1);
-                });
-            }
-
-            // Kick off the queue with the first model (Studio)
-            loadModelSequentially(0);
+            });
         }
  
         function openPdfInNewTab(blob, certificateNumber) {
